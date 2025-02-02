@@ -14,6 +14,7 @@ vars:
 env:
   KUBECONFIG: '{{.ROOT_DIR}}/kubeconfig'
   SOPS_AGE_KEY_FILE: '{{.ROOT_DIR}}/age.key'
+  BITWARDEN_KEY_FILE: '{{.ROOT_DIR}}/bitwarden.key'
   TALOSCONFIG: '{{.TALOSCONFIG}}'
 
 includes:
@@ -22,7 +23,6 @@ includes:
   template: .taskfiles/template
 
 tasks:
-
   default: task --list
 
   reconcile:
