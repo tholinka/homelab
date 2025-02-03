@@ -12,5 +12,5 @@
 			"./kubeconfig"
 		]
 	},
-	"yaml.format.singleQuote": false
+	"yaml.format.singleQuote": true
 }
