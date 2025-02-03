@@ -100,6 +100,8 @@ spec:
     ingress:
       app:
         className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: "status.${SECRET_DOMAIN}"
             paths:
