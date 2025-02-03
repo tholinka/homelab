@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: volsync-system
 resources:
   - ./snapshot-controller/ks.yaml
-  # - ./volsync/ks.yaml
+  - ./volsync/ks.yaml
 components:
   - ../../flux/components/alerts
   - ../../flux/components/namespace

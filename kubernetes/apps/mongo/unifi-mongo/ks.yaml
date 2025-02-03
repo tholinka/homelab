@@ -3,21 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app unifi
-  namespace: &namespace default
+  name: &app unifi-mongo
+  namespace: &namespace mongo
 spec:
   targetNamespace: *namespace
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../flux/components/gatus/guarded
-    - ../../../../flux/components/volsync
-  path: ./kubernetes/apps/default/unifi/app
-  postBuild:
-    substitute:
-      APP: *app
-      VOLSYNC_CAPACITY: 5Gi
+  path: ./kubernetes/apps/mongo/unifi-mongo/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -26,6 +19,15 @@ spec:
   wait: false
   interval: 30m
   timeout: 5m
+  components:
+    - ../../../../flux/components/volsync-manual
   dependsOn:
     - name: volsync
       namespace: volsync-system
+    - name: mongo
+      namespace: mongo
+  postBuild:
+    substitute:
+      APP: *app
+      VOLSYNC_CAPACITY: 7Gi
+      VOLSYNC_SOURCE: data-volume-unifi-0

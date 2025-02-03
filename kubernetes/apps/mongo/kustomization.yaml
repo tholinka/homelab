@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: mongo
 resources:
   - ./mongo/ks.yaml
+  - ./unifi-mongo/ks.yaml
 components:
   - ../../flux/components/alerts
   - ../../flux/components/namespace
