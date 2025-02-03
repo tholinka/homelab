@@ -97,16 +97,16 @@ spec:
         ports:
           http:
             port: *port
-    # ingress: # cloudflare bug
-    #   app:
-    #     className: external
-    #     hosts:
-    #       - host: "status.${SECRET_DOMAIN}"
-    #         paths:
-    #           - path: /
-    #             service:
-    #               identifier: app
-    #               port: http
+    ingress:
+      app:
+        className: external
+        hosts:
+          - host: "status.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
     serviceAccount:
       create: true
       name: gatus

@@ -15,6 +15,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   decryption:
     provider: sops
     secretRef:
@@ -35,6 +36,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+    namespace: flux-system
   decryption:
     provider: sops
     secretRef:
@@ -63,10 +65,10 @@ spec:
             substituteFrom:
               - name: cluster-settings
                 kind: ConfigMap
-                optional: true
+                optional: false
               - name: cluster-secrets
                 kind: Secret
-                optional: true
+                optional: false
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
