@@ -386,11 +386,41 @@ Add `config.gateway.json`
   "interfaces": {
     "ethernet": {
       "br0": {
-        "address": [ "192.168.1.1/24", "fd12:3456:789a:bcde::1/64"],
+        "address": [ "192.168.1.1/24", "fdaa:aaaa:aaaa:aa00::/64"],
         "ipv6": {
           "router-advert": {
             "prefix": {
-              "fd12:3456:789a:bcde::/64": {
+              "fdaa:aaaa:aaaa:aa00::/64": {
+                "autonomous-flag": "true",
+                "on-link-flag": "true",
+                "preferred-lifetime": "0",
+                "valid-lifetime": "86400"
+              }
+            }
+          }
+        }
+      },
+      "br20": {
+        "address": [ "192.168.20.1/24", "fdaa:aaaa:aaaa:aa20::/64"],
+        "ipv6": {
+          "router-advert": {
+            "prefix": {
+              "fdaa:aaaa:aaaa:aa20::/64": {
+                "autonomous-flag": "true",
+                "on-link-flag": "true",
+                "preferred-lifetime": "0",
+                "valid-lifetime": "86400"
+              }
+            }
+          }
+        }
+      },
+      "br30": {
+        "address": [ "192.168.30.1/24", "fdaa:aaaa:aaaa:aa30::/64"],
+        "ipv6": {
+          "router-advert": {
+            "prefix": {
+              "fdaa:aaaa:aaaa:aa30::/64": {
                 "autonomous-flag": "true",
                 "on-link-flag": "true",
                 "preferred-lifetime": "0",
