@@ -10,6 +10,7 @@ spec:
   trigger:
     manual: restore-once
   restic:
+    destinationPVC: '${VOLSYNC_SOURCE}'
     repository: '${APP}-volsync-secret'
     copyMethod: Snapshot
     volumeSnapshotClassName: '${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}'
