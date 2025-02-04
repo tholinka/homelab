@@ -22,7 +22,7 @@ spec:
         path: /
     - name: new
       persistentVolumeClaim:
-        claimName: unifi-pvc
+        claimName: unifi
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 # kubectl scale -n namespace sts sts-name --replicas=0

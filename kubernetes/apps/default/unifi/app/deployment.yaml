@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: unifi
   labels:
@@ -15,6 +15,7 @@ spec:
       labels:
         app: unifi
     spec:
+      serviceAccountName: unifi
       containers:
         - name: unifi
           image: lscr.io/linuxserver/unifi-network-application:9.0.108-ls76
@@ -78,6 +79,16 @@ spec:
             - name: syslog
               containerPort: 5514
               protocol: UDP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
           volumeMounts:
             - name: unifi-data
               mountPath: /config

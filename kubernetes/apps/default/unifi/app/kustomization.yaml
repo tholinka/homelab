@@ -1,9 +1,10 @@
 kind: Kustomization
 resources:
+  - deployment.yaml
   - externalsecret.yaml
   - ingress.yaml
   - service.yaml
-  - statefulset.yaml
+  - serviceaccount.yaml
 images:
   - name: linuxserver/unifi-controller
     newTag: 9.0.108-ls76
