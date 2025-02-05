@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./helmrelease.yaml
+  - ./externalsecret.yaml
+configMapGenerator:
+  - name: pihole-devices-helm-values
+    files:
+      - values.yaml=./pihole-devices-helm-values.yaml
+  - name: pihole-config
+    files:
+      - update.sh=./update.sh
+      - dnscrypt-proxy.toml=./dnscrypt-proxy.toml
+generatorOptions:
+  disableNameSuffixHash: true

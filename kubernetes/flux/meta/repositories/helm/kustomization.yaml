@@ -13,10 +13,10 @@ resources:
   - ./grafana.yaml
   - ./ingress-nginx.yaml
   - ./jetstack.yaml
-  - ./k8s-gateway.yaml
   - ./metrics-server.yaml
   - ./mongodb.yaml
   - ./openebs.yaml
+  - ./pihole.yaml
   - ./piraeus.yaml
   - ./prometheus-community.yaml
   - ./rook-ceph.yaml

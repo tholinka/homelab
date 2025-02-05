@@ -1,0 +1,157 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pihole
+  namespace: network
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://mojo2600.github.io/pihole-kubernetes
+      chart: pihole
+      version: 2.27.0
+      sourceRef:
+        kind: HelmRepository
+        name: pihole
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    replicaCount: 1
+
+    image:
+      repository: 'pihole/pihole'
+      tag: '2024.07.0'
+
+    dualStack:
+      enabled: false
+
+    serviceDns:
+      mixedService: true
+      type: LoadBalancer
+      port: 53
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: '192.168.20.6'
+      #loadBalancerIPv6: 'fdaa:aaaa:aaaa:aa20::6'
+      annotations:
+        prometheus.io/port: '9617'
+        prometheus.io/scrape: 'true'
+      # lbipam.cilium.io/ips: '192.168.20.6'
+    serviceDhcp:
+      enabled: false
+    ingress:
+      enabled: true
+      ingressClassName: internal
+      hosts:
+        - pihole.${SECRET_DOMAIN}
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    persistentVolumeClaim:
+      enabled: true
+      storageClass: 'ceph-block'
+    admin:
+      existingSecret: 'pihole-secret'
+      passwordKey: 'password'
+    extraEnvVars:
+      DNSMASQ_LISTENING: all
+      DNSSEC: 'false'
+      WEBUIBOXEDLAYOUT: traditional
+      WEBTHEME: default-auto
+
+    DNS1: '127.0.0.1#5053'
+    DNS2: '127.0.0.1#5053'
+    doh:
+      enabled: false
+
+    dnsmasq:
+      additionalHostEntries: []
+
+      customSettings:
+        - no-resolv
+        - no-poll
+
+    adlists: []
+
+    extraVolumes:
+      config-files:
+        configMap:
+          name: pihole-config
+
+    extraContainers:
+      - name: dnscrypt-proxy
+        image: 'klutchell/dnscrypt-proxy:bf6756750f17fc20796c7807387ac1ed6b6902b1'
+        resources:
+          requests:
+            cpu: 25m
+            memory: 100m
+        volumeMounts:
+          - name: config-files
+            mountPath: /config/dnscrypt-proxy.toml
+            subPath: dnscrypt-proxy.toml
+        livenessProbe:
+          tcpSocket:
+            port: 5053
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: 5053
+          initialDelaySeconds: 1
+          periodSeconds: 10
+
+    extraInitContainers:
+      - name: update-lists
+        image: 'pihole/pihole:2024.07.0'
+        command:
+          - 'bash'
+        args:
+          - '-e'
+          - /config/update.sh
+        volumeMounts:
+          - name: config-files
+            mountPath: /config/update.sh
+            subPath: update.sh
+          - name: config
+            mountPath: /final
+
+    monitoring:
+      podMonitor:
+        enabled: true
+      sidecar:
+        enabled: true
+        image:
+          repository: ekofr/pihole-exporter
+          tag: v0.4.0
+          port: 9617
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+    podDnsConfig:
+      enabled: true
+      policy: 'None'
+      nameservers:
+        - 127.0.0.1
+        - 1.1.1.1
+        - 1.0.0.1
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    virtualHost: 'pihole.${SECRET_DOMAIN}'
+  valuesFrom:
+    - kind: ConfigMap
+      name: pihole-devices-helm-values
