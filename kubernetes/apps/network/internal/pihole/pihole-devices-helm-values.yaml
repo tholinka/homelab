@@ -1,0 +1,37 @@
+dnsmasq:
+  additionalHostEntries:
+    - cluster.servers.internal 192.168.20.2
+    - use-application-dns.net 192.168.20.3
+    - unifi 192.168.20.5
+
+    - nvr.internal 192.168.1.33
+
+    - zigbee.internal 192.168.1.29
+
+    - bedroom.air.internal 192.168.1.30
+    - outdoor.air.internal 192.168.1.31
+    - living.air.internal 192.168.1.72
+
+    - garage.internal 192.168.1.32
+
+    - one.plugs.internal 192.168.1.50
+    - two.plugs.internal 192.168.1.51
+    - three.plugs.internal 192.168.1.52
+    - four.plugs.internal 192.168.1.53
+
+    - t1.computers.internal 192.168.1.10
+    - t2.computers.internal 192.168.1.12
+
+    - s1.servers.internal 192.168.1.21
+
+    - p1.servers.internal 192.168.20.51
+    - p2.servers.internal 192.168.20.52
+
+    - c1.servers.internal 192.168.20.61
+    - c2.servers.internal 192.168.20.62
+    - c3.servers.internal 192.168.20.63
+
+    - w1.servers.internal 192.168.20.71
+    - w2.servers.internal 192.168.20.72
+    - w3.servers.internal 192.168.20.73
+    - w4.servers.internal 192.168.20.74
