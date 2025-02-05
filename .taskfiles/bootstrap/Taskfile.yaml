@@ -27,16 +27,23 @@ tasks:
 
   apps:
     desc: Bootstrap apps into the Talos cluster
+    summary: |
+      IMPORTANT: All nodes will be used for OSDs and the rook drives will be wiped!
+    prompt: Bootstrap apps into the Talos cluster?
     cmds:
-      - until kubectl wait --for=condition=Ready=False nodes --all --timeout=600s; do sleep 10; done
+      #- until kubectl wait --for=condition=Ready=False nodes --all --timeout=600s; do sleep 10; done
       - kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply --server-side --filename -
       - '{{if eq .GITHUB_DEPLOY_KEY_EXISTS "true"}}sops exec-file {{.GITHUB_DEPLOY_KEY_FILE}} "kubectl apply --server-side --filename {}"{{end}}'
       - '{{if eq .SOPS_SECRET_EXISTS "false"}}cat {{.SOPS_AGE_KEY_FILE}} | kubectl --namespace flux-system create secret generic sops-age --from-file=age.agekey=/dev/stdin{{end}}'
       - kubectl create namespace external-secrets --dry-run=client -o yaml | kubectl apply --server-side --filename -
       - '{{if eq .BITWARDEN_SECRET_EXISTS "false"}}cat {{.BITWARDEN_KEY_FILE}} | tr -d "\r\n " | kubectl --namespace external-secrets create secret generic bitwarden-secrets-manager --from-file=token=/dev/stdin{{end}}'
-      - sops exec-file {{.KUBERNETES_DIR}}/flux/meta/settings/cluster-secrets.sops.yaml "kubectl apply --server-side --filename {}"
-      - kubectl apply --server-side --filename {{.KUBERNETES_DIR}}/flux/meta/settings/cluster-settings.yaml
+      - sops exec-file {{.KUBERNETES_DIR}}/flux/components/namespace/cluster-secrets.sops.yaml "kubectl apply --server-side --filename {}"
+      - kubectl apply --server-side --filename {{.KUBERNETES_DIR}}/flux/components/namespace/cluster-settings.yaml
+      - 'echo "node count: $NODE_COUNT"'
       - helmfile --file {{.KUBERNETES_DIR}}/bootstrap/helmfile.yaml apply --skip-diff-on-install --suppress-diff
+    env:
+      NODE_COUNT:
+        sh: talosctl config info --output json | jq --raw-output '.nodes | length'
     vars:
       GITHUB_DEPLOY_KEY_EXISTS:
         sh: test -f {{.GITHUB_DEPLOY_KEY_FILE}} && echo true || echo false
@@ -48,4 +55,8 @@ tasks:
       - test -f {{.KUBECONFIG}}
       - test -f {{.KUBERNETES_DIR}}/bootstrap/helmfile.yaml
       - test -f {{.SOPS_AGE_KEY_FILE}}
+      - test -f {{.KUBERNETES_DIR}}/bootstrap/talos/clusterconfig/talosconfig
+      - test -f {{.KUBERNETES_DIR}}/bootstrap/templates/wipe-rook.yaml.gotmpl
+      - test -f {{.KUBERNETES_DIR}}/flux/components/namespace/cluster-secrets.sops.yaml
+      - test -f {{.KUBERNETES_DIR}}/flux/components/namespace/cluster-settings.yaml
       - which helmfile kubectl sops

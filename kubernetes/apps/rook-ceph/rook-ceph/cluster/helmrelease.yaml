@@ -71,7 +71,7 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        devicePathFilter: ^/dev/disk/by-id/(ata-SPCC_M.2_SSD_SP|nvme-SPCC_M\.2_PCIe_SSD_FF).*
+        devicePathFilter: ^/dev/disk/by-id/(ata-SPCC_M.2_SSD_SP|nvme-SPCC_M.2_PCIe_SSD_FF).*
         config:
           osdsPerDevice: '1'
       resources:

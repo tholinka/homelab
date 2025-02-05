@@ -1,0 +1,67 @@
+controllers:
+  main:
+    type: job
+    annotations:
+      helm.sh/hook: 'post-install,post-upgrade'
+      helm.sh/hook-delete-policy: 'before-hook-creation'
+    job:
+      backoffLimit: 0
+      parallelism: {{ requiredEnv "NODE_COUNT" }}
+    initContainers:
+      data:
+        image:
+          repository: docker.io/library/alpine
+          tag: latest
+        command:
+          - /bin/sh
+          - -c
+        args:
+          - rm -rf /mnt/host_var/lib/rook
+        securityContext:
+          privileged: true
+    containers:
+      disk:
+        image:
+          repository: docker.io/library/alpine
+          tag: latest
+        command:
+          - /bin/sh
+          - -c
+        args: # see kubernetes/apps/rook-ceph/rook-ceph/cluster/helmrelease.yaml -> spec.values.cephClusterSpec.storage.devicePathFilter, this needs to be the exact same regex!
+          - |
+            apk add --no-cache findutils nvme-cli sgdisk;
+            ls /dev/disk/by-id;
+            DISK=$(find /dev/disk/by-id/ -regextype posix-extended -regex "^/dev/disk/by-id/(ata-SPCC_M.2_SSD_SP|nvme-SPCC_M.2_PCIe_SSD_FF).*" -not -name "*_[0-9]" -not -name "*-part[0-9]");
+            echo "=== Wiping $DISK ===";
+            if nvme format --lbaf=1 $DISK --force; then
+              echo "is nvme";
+              nvme format --block-size=4096 $DISK --force;
+            else
+              echo "not nvme"
+              sgdisk --zap-all $DISK;
+            fi
+        securityContext:
+          privileged: true
+    pod:
+      restartPolicy: Never
+defaultPodOptions:
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/name: wipe-rook
+persistence:
+  host-var:
+    type: hostPath
+    hostPath: /var
+    hostPathType: Directory
+    globalMounts:
+      - path: /mnt/host_var
+  host-dev:
+    type: hostPath
+    hostPath: /dev/disk/by-id
+    hostPathType: Directory
+    globalMounts:
+      - path: /dev/disk/by-id

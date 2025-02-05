@@ -6,23 +6,30 @@ metadata:
   name: volman
 spec:
   containers:
-    - image: busybox
+    - image: docker.io/library/alpine:latest
       name: volman
       command:
-        - sleep
-        - '99999999'
+        - /bin/sh
+        - -c
+      args: # see kubernetes/apps/rook-ceph/rook-ceph/cluster/helmrelease.yaml -> spec.values.cephClusterSpec.storage.devicePathFilter, this needs to be the exact same regex!
+        - |
+          apk add --no-cache findutils nvme-cli;
+          DISK=$(find /dev/disk/by-id/ -regextype posix-extended -regex "^/dev/disk/by-id/(ata-SPCC_M.2_SSD_SP|nvme-SPCC_M.2_PCIe_SSD_FF).*" -not -name "*_[0-9]" -not -name "*-part[0-9]");
+          echo "=== Wiping $DISK ===";
+          nvme format --lbaf=1 $DISK --force;
+          nvme format --block-size=4096 $DISK --force;
       volumeMounts:
-        - mountPath: /data/old
+        - mountPath: /dev/disk
           name: old
         - mountPath: /data/new
           name: new
   volumes:
     - name: old
       hostPath:
-        path: /
+        path: /dev/disk
     - name: new
-      persistentVolumeClaim:
-        claimName: unifi
+      hostPath:
+        path: /
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 # kubectl scale -n namespace sts sts-name --replicas=0
