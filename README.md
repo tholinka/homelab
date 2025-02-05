@@ -374,7 +374,7 @@ Big shout out to all the contributors, sponsors and everyone else who has helped
 
 ## Unifi IPv6 ULA setup
 
-For more info: https://techlevelup.net/assign-ipv6-guas-and-ulas-simultaneously-in-your-unifi-home-network/, https://www.appuntidallarete.com/ubiquiti-unifi-usg-advanced-configuration-using-config-gateway-json/, https://community.ui.com/questions/IPv6-Have-USG-assign-Unique-Local-Address-through-Router-Advertisement/e516521b-9f40-4a00-a0b6-60311790276d#comment/5cb60cbc-7bb4-46cd-a284-1d52db8b1173
+For more info: https://techlevelup.net/assign-ipv6-guas-and-ulas-simultaneously-in-your-unifi-home-network/, https://community.ui.com/questions/IPv6-Have-USG-assign-Unique-Local-Address-through-Router-Advertisement/e516521b-9f40-4a00-a0b6-60311790276d#comment/5cb60cbc-7bb4-46cd-a284-1d52db8b1173
 
 in your unifi network app's data folder, go to `<unifi folder base>/data/sties/<unifi site name>`. (e.g. on cloudkey it's `/srv/unifi/data/sites/[name]/default`)
 

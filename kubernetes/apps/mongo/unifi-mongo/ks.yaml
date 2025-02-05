@@ -20,7 +20,7 @@ spec:
   interval: 30m
   timeout: 5m
   components:
-    - ../../../../flux/components/volsync-manual
+    - ../../../../flux/components/volsync
   dependsOn:
     - name: volsync
       namespace: volsync-system
@@ -29,5 +29,4 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 7Gi
-      VOLSYNC_SOURCE: data-volume-unifi-0
+      VOLSYNC_CAPACITY: 5Gi

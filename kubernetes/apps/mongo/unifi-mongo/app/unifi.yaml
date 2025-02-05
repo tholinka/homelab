@@ -51,13 +51,9 @@ spec:
           spec:
             accessModes: ['ReadWriteOnce']
             storageClassName: ceph-block
-            dataSourceRef:
-              kind: ReplicationDestination
-              apiGroup: volsync.backube
-              name: 'data-volume-unifi-mongo-dst'
             resources:
               requests:
-                storage: 5G
+                storage: 1G # we patch this with a mutation policy, so it never gets used
         - metadata:
             name: logs-volume
           spec:
