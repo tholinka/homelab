@@ -79,7 +79,7 @@ spec:
         providers:
           - name: default
             orgId: 1
-            folder: ""
+            folder: ''
             type: file
             disableDeletion: false
             editable: true
@@ -214,6 +214,12 @@ spec:
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
             - { name: VAR_REPLICATIONDESTNAME, value: .*-dst }
+        pihole-exporter:
+          # renovate: depName="VolSync"
+          gnetId: 10176
+          revision: 3
+          datasource:
+            - { name: DS_PROMETHEUS, value: Prometheus }
     sidecar:
       dashboards:
         enabled: true
@@ -226,7 +232,7 @@ spec:
       datasources:
         enabled: true
         searchNamespace: ALL
-        labelValue: ""
+        labelValue: ''
     plugins:
       - grafana-clock-panel
       - grafana-piechart-panel
@@ -239,7 +245,7 @@ spec:
     ingress:
       enabled: true
       ingressClassName: internal
-      hosts: ["grafana.${SECRET_DOMAIN}"]
+      hosts: ['grafana.${SECRET_DOMAIN}']
     persistence:
       enabled: false
     testFramework:

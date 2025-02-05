@@ -1,0 +1,248 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pihole
+  namespace: network
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.6.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    defaultPodOptions:
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - '127.0.0.1'
+          - '1.1.1.1'
+          - '1.0.0.1'
+
+    controllers:
+      pihole:
+        enabled: true
+        type: deployment
+        annotations: {}
+        labels: {}
+        replicas: 1
+        strategy: RollingUpdate
+        rollingUpdate:
+          unavailable: 1
+          surge: 1
+
+        initContainers:
+          init:
+            image:
+              repository: pihole/pihole
+              tag: '2024.07.0'
+            command:
+              - 'bash'
+            args:
+              - '-e'
+              - /config/update.sh
+
+        containers:
+          pihole:
+            dependsOn: ['dnscrypt-proxy']
+            image:
+              repository: 'pihole/pihole'
+              tag: '2024.07.0'
+            env:
+              TZ: 'America/Chicago'
+              DNSMASQ_LISTENING: all
+              DNSSEC: 'false'
+              PIHOLE_DNS_: 127.0.0.1#5053;127.0.0.1#5053
+              WEBUIBOXEDLAYOUT: traditional
+              WEBTHEME: default-auto
+              WEB_PORT: &pihole-port 80
+              VIRTUAL_HOST: pihole.${SECRET_DOMAIN}
+              WEBPASSWORD: &pihole-password
+                valueFrom:
+                  secretKeyRef:
+                    name: pihole-secret
+                    key: password
+            probes:
+              liveness: &pihole-probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /admin/login.php
+                    port: *pihole-port
+                    scheme: HTTP
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 5
+              startup: *pihole-probes # template has a default failureThreshold of 30
+              readiness: *pihole-probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+            resources:
+              limits:
+                cpu: 100m
+                memory: 128Mi
+              requests:
+                cpu: 50m
+                memory: 128Mi
+          dnscrypt-proxy:
+            image:
+              repository: 'klutchell/dnscrypt-proxy'
+              tag: 'bf6756750f17fc20796c7807387ac1ed6b6902b1'
+            # probes:
+            #   liveness: &dnscrypt-probes
+            #     enabled: true
+            #     custom: true
+            #     spec:
+            #       failureThreshold: 3
+            #       initialDelaySeconds: 60
+            #       periodSeconds: 20
+            #       successThreshold: 1
+            #       exec:
+            #         command:
+            #           - nslookup # nslookup doesn't exist in this image, and there's no such thing as a udp port for k8s probes
+            #           - -po=5053
+            #           - cloudflare.com
+            #           - '127.0.0.1'
+            #       timeoutSeconds: 1
+            #   readiness: *dnscrypt-probes
+            resources:
+              requests:
+                cpu: 25m
+                memory: 100m
+          exporter:
+            image:
+              repository: ekofr/pihole-exporter
+              tag: v0.4.0
+            env:
+              PIHOLE_HOSTNAME:
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
+              PIHOLE_PORT: *pihole-port
+              PIHOLE_PASSWORD: *pihole-password
+            resources:
+              limits:
+                memory: 128Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+            probes:
+              liveness: &exporter-probes
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  initialDelaySeconds: 10
+                  periodSeconds: 20
+                  successThreshold: 1
+                  tcpSocket:
+                    port: &exporter-port 9617
+                  timeoutSeconds: 1
+              readiness: *exporter-probes
+
+    service:
+      web:
+        controller: pihole
+        type: ClusterIP
+        internalTrafficPolicy: Cluster
+        ipFamilyPolicy: PreferDualStack
+
+        ports:
+          http:
+            primary: true
+            port: *pihole-port
+            protocol: HTTP
+          https:
+            primary: false
+            port: 443
+            protocol: HTTPS
+          prometheus:
+            port: *exporter-port
+            protocol: HTTP
+      pihole:
+        controller: pihole
+        type: LoadBalancer
+        internalTrafficPolicy: Cluster
+        externalTrafficPolicy: Cluster
+        ipFamilyPolicy: PreferDualStack
+        annotations:
+          lbipam.cilium.io/ips: '192.168.20.6,fdaa:aaaa:aaaa:aa20::6'
+
+        ports:
+          dns-udp:
+            primary: false
+            port: 53
+            protocol: UDP
+          # dns-tcp:
+          #   primary: false
+          #   port: 53
+          #   protocol: TCP
+    ingress:
+      pihole:
+        className: internal
+        hosts:
+          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
+            paths:
+              - path: /
+                service:
+                  identifier: web
+                  port: http
+    serviceMonitor:
+      pihole:
+        serviceName: pihole-web
+        endpoints:
+          - port: prometheus # exporter-port's name
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        storageClass: 'ceph-block'
+        accessMode: 'ReadWriteOnce'
+        size: 500Mi
+        advancedMounts:
+          pihole:
+            pihole:
+              - path: /etc/pihole
+                readOnly: false
+            init:
+              - path: /final
+                readOnly: false
+      config-map:
+        type: configMap
+        name: pihole-config
+        advancedMounts:
+          pihole:
+            init:
+              - path: /config/update.sh
+                subPath: update.sh
+                readOnly: true
+            pihole:
+              - path: /etc/dnsmasq.d/02-custom.conf
+                subPath: 02-custom.conf
+                readOnly: true
+              - path: /etc/dnsmasq.d/03-hosts.conf
+                subPath: 03-hosts.conf
+                readOnly: true
+            dnscrypt-proxy:
+              - path: /config/dnscrypt-proxy.toml
+                subPath: dnscrypt-proxy.toml
+                readOnly: true
