@@ -6,12 +6,11 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
 configMapGenerator:
-  - name: pihole-devices-helm-values
-    files:
-      - values.yaml=./pihole-devices-helm-values.yaml
   - name: pihole-config
     files:
-      - update.sh=./update.sh
-      - dnscrypt-proxy.toml=./dnscrypt-proxy.toml
+      - update.sh=./configs/update.sh
+      - dnscrypt-proxy.toml=./configs/dnscrypt-proxy.toml
+      - 02-custom.conf=./configs/02-custom.conf
+      - 03-hosts.conf=./configs/03-hosts.conf
 generatorOptions:
   disableNameSuffixHash: true
