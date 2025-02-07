@@ -36,7 +36,8 @@ spec:
       pihole:
         enabled: true
         type: deployment
-        annotations: {}
+        annotations:
+          reloader.stakater.com/auto: 'true'
         labels: {}
         replicas: 1
         strategy: RollingUpdate
@@ -228,7 +229,7 @@ spec:
                 readOnly: false
       config-map:
         type: configMap
-        name: pihole-config
+        name: pihole-configmap
         advancedMounts:
           pihole:
             init:
