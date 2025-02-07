@@ -7,7 +7,7 @@ bpf:
   datapathMode: netkit
   masquerade: true
   # Ref: https://github.com/siderolabs/talos/issues/10002
-  hostLegacyRouting: true
+  #hostLegacyRouting: true
   preallocateMaps: true
   tproxy: true
 cni:
@@ -17,10 +17,10 @@ cgroup:
   automount:
     enabled: false
   hostRoot: /sys/fs/cgroup
-ipv6:
-  enabled: true
-enableIPv4BIGTCP: true
-enableIPv6BIGTCP: true
+#ipv6:
+#  enabled: true
+#enableIPv6BIGTCP: true
+#ipv6NativeRoutingCIDR: 'fdaa:aaaa:aaaa:aa20::/64'
 
 # NOTE: devices might need to be set if you have more than one active NIC on your hosts
 # devices: eno+ eth+
@@ -34,8 +34,8 @@ hubble:
   enabled: false
 ipam:
   mode: kubernetes
+enableIPv4BIGTCP: true
 ipv4NativeRoutingCIDR: '10.69.0.0/16'
-ipv6NativeRoutingCIDR: 'fdaa:aaaa:aaaa:aa20::/64'
 k8sServiceHost: 127.0.0.1
 k8sServicePort: 7445
 kubeProxyReplacement: true
