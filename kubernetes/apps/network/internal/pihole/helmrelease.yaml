@@ -181,10 +181,10 @@ spec:
         type: LoadBalancer
         internalTrafficPolicy: Cluster
         externalTrafficPolicy: Cluster
-        ipFamilyPolicy: PreferDualStack
+        #ipFamilyPolicy: PreferDualStack
         annotations:
-          lbipam.cilium.io/ips: '192.168.20.6,fdaa:aaaa:aaaa:aa20::6'
-
+          #lbipam.cilium.io/ips: '192.168.20.6,fdaa:aaaa:aaaa:aa20::6'
+          lbipam.cilium.io/ips: '192.168.20.6'
         ports:
           dns-udp:
             primary: false
