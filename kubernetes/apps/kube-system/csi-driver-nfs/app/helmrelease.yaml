@@ -29,7 +29,7 @@ spec:
       create: true
       name: nfs-slow
       parameters:
-        server: 192.168.1.21
+        server: nfs.servers.local
         share: /kubernetes
       mountOptions:
         - nfsvers=4.2

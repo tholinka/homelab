@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: default
 resources:
   - ./echo-server/ks.yaml
+  - ./plex/ks.yaml
   - ./unifi/ks.yaml
 components:
   - ../../flux/components/alerts
