@@ -9,13 +9,17 @@ resources:
   - ./cilium.yaml
   - ./controlplaneio.yaml
   - ./coredns.yaml
+  - ./csi-driver-nfs.yaml
+  - ./descheduler.yaml
   - ./external-dns.yaml
   - ./external-secrets.yaml
   - ./grafana.yaml
   - ./ingress-nginx.yaml
+  - ./intel.yaml
   - ./jetstack.yaml
   - ./metrics-server.yaml
   - ./mongodb.yaml
+  - ./node-feature-discovery.yaml
   - ./openebs.yaml
   - ./piraeus.yaml
   - ./prometheus-community.yaml

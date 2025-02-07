@@ -3,16 +3,16 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: spegel
+  name: csi-driver-nfs
 spec:
   interval: 30m
   chart:
     spec:
-      chart: spegel
-      version: v0.0.30
+      chart: csi-driver-nfs
+      version: v4.10.0
       sourceRef:
         kind: HelmRepository
-        name: spegel
+        name: csi-driver-nfs
         namespace: flux-system
   install:
     remediation:
@@ -23,14 +23,18 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    grafanaDashboard:
-      enabled: true
-    service:
-      registry:
-        hostPort: 29999
-    serviceMonitor:
-      enabled: true
-    spegel:
-      appendMirrors: true
-      containerdSock: /run/containerd/containerd.sock
-      containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+    controller:
+      replicas: 1
+    storageClass:
+      create: true
+      name: nfs-slow
+      parameters:
+        server: 192.168.1.21
+        share: /kubernetes
+      mountOptions:
+        - nfsvers=4.2
+        - nconnect=16
+        - hard
+        - noatime
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
