@@ -56,6 +56,52 @@ tasks:
       - test -f {{.TALOSCONFIG}}
       - which talhelper talosctl yq
 
+  reboot-node:
+    desc: Reboot Talos on a single node [IP=required] [MODE=default]
+    cmds:
+      - task: down
+      - talosctl --nodes {{.IP}} reboot --mode={{.MODE}}
+      - talosctl --nodes {{.IP}} health
+      - task: up
+    vars:
+      MODE: '{{.MODE | default "default"}}'
+    requires:
+      vars: [IP]
+    preconditions:
+      - talosctl --nodes {{.IP}} get machineconfig
+      - talosctl config info
+      - test -f {{.KUBERNETES_DIR}}/bootstrap/.cluster.env
+      - test -f {{.KUBERNETES_DIR}}/talosconfig
+      - which talosctl
+
+  shutdown-cluster:
+    desc: Shutdown Talos across the whole cluster
+    prompt: Shutdown the Talos cluster ... continue?
+    cmd: talosctl shutdown --nodes {{.IP_ADDRS}} --force
+    vars:
+      IP_ADDRS:
+        sh: talosctl config info --output json | jq --join-output '[.nodes[]] | join(",")'
+    preconditions:
+      - talosctl --nodes {{.NODES}} get machineconfig
+      - talosctl config info
+      - test -f {{.KUBERNETES_DIR}}/talosconfig
+      - which jq talosctl
+
+  apply-cluster:
+    desc: Apply Talos config across the whole cluster [MODE=default]
+    cmds:
+      - for: { var: IP_ADDRS }
+        task: apply-node
+        vars:
+          IP: '{{.ITEM}}'
+          MODE: '{{.MODE}}'
+    vars:
+      MODE: '{{.MODE | default "auto"}}'
+      IP_ADDRS:
+        sh: talosctl config info --output json | jq --join-output '[.nodes[]] | join(" ")'
+    preconditions:
+      - which jq talosctl
+
   reset:
     desc: Resets nodes back to maintenance mode
     dir: '{{.TALHELPER_DIR}}'

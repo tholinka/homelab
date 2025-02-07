@@ -8,6 +8,13 @@ _... managed with Flux, Renovate, and GitHub Actions_ <img src="https://fonts.gs
 
 </div>
 
+<div align="center">
+
+[![Discord](https://img.shields.io/discord/673534664354430999?style=for-the-badge&label&logo=discord&logoColor=white&color=blue)](https://discord.gg/home-operations)&nbsp;&nbsp;
+[![Renovate](https://img.shields.io/github/actions/workflow/status/tholinka/homelab/renovate.yaml?branch=main&label=&logo=renovatebot&style=for-the-badge&color=blue)](https://github.com/tholinka/homelab/actions/workflows/renovate.yaml)
+
+</div>
+
 ## 💡 Overview
 
 This is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Environment as Code (EaC), Infrastructure as Code (IaC) and GitOps practices using tools like [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate), and [GitHub Actions](https://github.com/features/actions).
@@ -18,6 +25,7 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 
 ### Core Components
 
+- [actions-runner-controller](https://github.com/actions/actions-runner-controller): Self-hosted Github runners.
 - [cert-manager](https://github.com/cert-manager/cert-manager): Creates SSL certificates for services in my cluster.
 - [cilium](https://github.com/cilium/cilium): Internal Kubernetes container networking interface.
 - [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare secure access to `external` ingresses.

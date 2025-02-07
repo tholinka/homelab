@@ -3,6 +3,22 @@
 	"packageRules": [
 		{
 			"description": [
+				"Actions Runner Controller Group"
+			],
+			"groupName": "Actions Runner Controller",
+			"matchPackagePatterns": [
+				"gha-runner-scale-set"
+			],
+			"matchDatasources": [
+				"docker",
+				"helm"
+			],
+			"group": {
+				"commitMessageTopic": "{{{groupName}}} group"
+			}
+		},
+		{
+			"description": [
 				"Flux Operator Group"
 			],
 			"groupName": "Flux Operator",
