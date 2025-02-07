@@ -71,7 +71,7 @@ tasks:
       - talosctl --nodes {{.IP}} get machineconfig
       - talosctl config info
       - test -f {{.KUBERNETES_DIR}}/bootstrap/.cluster.env
-      - test -f {{.KUBERNETES_DIR}}/talosconfig
+      - test -f {{.KUBERNETES_DIR}}/bootstrap/talos/clusterconfig/talosconfig
       - which talosctl
 
   shutdown-cluster:
@@ -84,7 +84,7 @@ tasks:
     preconditions:
       - talosctl --nodes {{.NODES}} get machineconfig
       - talosctl config info
-      - test -f {{.KUBERNETES_DIR}}/talosconfig
+      - test -f {{.KUBERNETES_DIR}}/bootstrap/talos/clusterconfig/talosconfig
       - which jq talosctl
 
   apply-cluster:

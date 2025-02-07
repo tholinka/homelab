@@ -10,6 +10,6 @@ spec:
   targets:
     staticConfig:
       static:
-        - s1.servers.internal
+        - nfs.servers.internal
         - zigbee.iot.internal
         - garage.iot.internal
