@@ -3,7 +3,6 @@
 version: '3'
 
 tasks:
-
   generate-config:
     desc: Generate Talos configuration
     dir: '{{.TALHELPER_DIR}}'

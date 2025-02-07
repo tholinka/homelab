@@ -13,9 +13,11 @@ tasks:
       - '{{if eq .TALHELPER_SECRET_EXISTS "false"}}talhelper gensecret > {{.TALHELPER_DIR}}/talsecret.sops.yaml{{end}}'
       - '{{if eq .TALHELPER_SECRET_EXISTS "false"}}sops --encrypt --in-place {{.TALHELPER_DIR}}/talsecret.sops.yaml{{end}}'
       - talhelper genconfig
+      - cp {{.TALHELPER_DIR}}/clusterconfig/talosconfig $HOME/.talos/config
       - talhelper gencommand apply --extra-flags="--insecure" | bash
       - until talhelper gencommand bootstrap | bash; do sleep 10; done
       - until talhelper gencommand kubeconfig --extra-flags="{{.ROOT_DIR}} --force" | bash; do sleep 10; done
+      - cp {{.ROOT_DIR}}/kubeconfig $HOME/.kube/config
     vars:
       TALHELPER_SECRET_EXISTS:
         sh: test -f {{.TALHELPER_DIR}}/talsecret.sops.yaml && echo true || echo false

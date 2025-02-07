@@ -26,6 +26,8 @@ spec:
       namespace: volsync-system
     - name: mongo
       namespace: mongo
+    - name: bitwarden-certificates
+      namespace: external-secrets
   postBuild:
     substitute:
       APP: *app
