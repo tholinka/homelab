@@ -39,20 +39,33 @@ echo "Done with allowlist"
 # new sqlite approach based on https://discourse.pi-hole.net/t/blocklist-management-in-pihole-v5/31971/9
 echo;
 echo;
-echo "removing old adlist"
-sqlite3 /etc/pihole/gravity.db "DELETE FROM adlist"
-
+echo "getting current adlists"
+sqlite3 /etc/pihole/gravity.db "SELECT address FROM adlist" | sort > /tmp/current.list
 
 echo "Downloading adlist from wally3k.firebog.net"
 echo;
-curl "https://v.firebog.net/hosts/lists.php?type=tick" | xargs -I {} sqlite3 /etc/pihole/gravity.db "INSERT INTO adlist (Address, Comment, Enabled) VALUES ('{}', 'firebog, added `date +%F`', 1);"
+curl "https://v.firebog.net/hosts/lists.php?type=tick" | sort > /tmp/firebog.list
 
 echo;
 echo;
 echo "Adding tholinka.github.io tracking lists"
 
 echo "https://tholinka.github.io/projects/hosts/wintracking/normal
-https://tholinka.github.io/projects/hosts/hosts" | xargs -I {} sqlite3 /etc/pihole/gravity.db "INSERT INTO adlist (Address, Comment, Enabled) VALUES ('{}', 'tholinka.github.io, added `date +%F`', 1);"
+https://tholinka.github.io/projects/hosts/hosts" | sort > /tmp/tholinka.list
+
+cat /tmp/firebog.list /tmp/tholinka.list | sort > /tmp/combined.list
+
+echo "Removing lists not in the combined lists from db"
+
+echo "Removing: $(comm -23 /tmp/current.list /tmp/combined.list)"
+
+comm -23 /tmp/current.list /tmp/combined.list | xargs -I{} sudo sqlite3 /etc/pihole/gravity.db "DELETE FROM adlist WHERE Address='{}';"
+
+echo "Inserting new firebog lists into db: $(comm -13 /tmp/current.list /tmp/firebog.list)"
+comm -13 /tmp/current.list /tmp/firebog.list | xargs -I{} sqlite3 /etc/pihole/gravity.db "INSERT INTO adlist (Address, Comment, Enabled) VALUES ('{}', 'firebog, added `date +%F`', 1);"
+
+echo "Inserting new tholinka.github.io lists into db: $(comm -13 /tmp/current.list /tmp/tholinka.list)"
+comm -13 /tmp/current.list /tmp/tholinka.list | xargs -I{} sqlite3 /etc/pihole/gravity.db "INSERT INTO adlist (Address, Comment, Enabled) VALUES ('{}', 'tholinka.github.io, added `date +%F`', 1);"
 
 # let gravity run during startup
 #echo;
