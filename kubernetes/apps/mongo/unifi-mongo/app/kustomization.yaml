@@ -3,5 +3,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./unifi.yaml
-  - ./mutations
+  - ./mutations # this HAS to be first for the mutation to take effect before the statefulset gets created!
+  - ./unifi-mongo.yaml

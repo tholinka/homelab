@@ -22,7 +22,7 @@ spec:
   matchConditions:
     - name: ${APP}-only
       expression: >
-        object.metadata.name == "unifi" && object.metadata.namespace == "mongo"
+        object.metadata.name == "unifi-mongo" && object.metadata.namespace == "mongo"
     - name: ${APP}-has-default-data-volume
       expression: >
         has(object.spec.volumeClaimTemplates) && object.spec.volumeClaimTemplates.size() == 2 && object.spec.volumeClaimTemplates[0].metadata.name == "data-volume"
@@ -59,7 +59,7 @@ spec:
   matchConditions:
     - name: ${APP}-only
       expression: >
-        object.metadata.name == "unifi" && object.metadata.namespace == "mongo"
+        object.metadata.name == "unifi-mongo" && object.metadata.namespace == "mongo"
     - name: ${APP}-has-default-data-volume
       expression: >
         !object.spec.template.spec.volumes.exists(v, v.name == "data-volume")
