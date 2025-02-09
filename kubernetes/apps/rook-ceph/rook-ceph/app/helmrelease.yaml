@@ -32,7 +32,51 @@ spec:
       enableLiveness: true
       serviceMonitor:
         enabled: true
-    enableDiscoveryDaemon: true
+      csiRBDPluginResource: |
+        - name : driver-registrar
+          resource:
+            requests:
+              memory: 16Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
+        - name : csi-rbdplugin
+          resource:
+            requests:
+              memory: 128Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+        - name : liveness-prometheus
+          resource:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
+      csiCephFSPluginResource: |
+        - name : driver-registrar
+          resource:
+            requests:
+              memory: 16Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
+        - name : csi-cephfsplugin
+          resource:
+            requests:
+              memory: 128Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+        - name : liveness-prometheus
+          resource:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
+        enableDiscoveryDaemon: true
     monitoring:
       enabled: true
     resources:
