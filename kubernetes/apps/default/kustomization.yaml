@@ -6,6 +6,7 @@ namespace: default
 resources:
   - ./echo-server/ks.yaml
   - ./emqx/ks.yaml
+  - ./home-assistant/ks.yaml
   - ./plex/ks.yaml
   - ./unifi/ks.yaml
   - ./zigbee/ks.yaml

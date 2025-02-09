@@ -5,6 +5,8 @@ kind: Pod
 metadata:
   name: volman
 spec:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   containers:
     - image: docker.io/library/alpine:latest
       name: volman
@@ -29,7 +31,7 @@ spec:
         readOnly: true
     - name: new
       persistentVolumeClaim:
-        claimName: plex
+        claimName: home-assistant
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 # kubectl scale -n namespace sts sts-name --replicas=0
