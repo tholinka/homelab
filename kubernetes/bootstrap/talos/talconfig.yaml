@@ -26,6 +26,47 @@ cniConfig:
   name: none
 
 nodes:
+  - hostname: 'p2'
+    ipAddress: '192.168.20.52'
+    installDiskSelector:
+      serial: '0x31e2672f'
+    # uses vlan0 to install, then migrates to vlan20
+    # TODO fix installer so that it uses vlan20 -> the installer image potentially also needs: vlan=end0.20:end0 ip=:::::end0:off ip=192.168.20.52::192.168.20.1:255.255.255.0:p2:end0.20:off
+    #  but then after installation there's no connectivity, and errors in the logs about to many links...
+    # see this bug: https://github.com/siderolabs/sbc-raspberrypi/issues/38, SDcards won't boot with the watchdog turned on
+    # configTxt: |
+    #   See https://www.raspberrypi.com/documentation/computers/configuration.html
+    #   # Reduce GPU memory to give more to CPU.
+    #   gpu_mem=32
+    #   # Enable maximum compatibility on both HDMI ports;
+    #   # only the one closest to the power/USB-C port will work in practice.
+    #   hdmi_safe:0=1
+    #   hdmi_safe:1=1
+    #   # Load U-Boot.
+    #   kernel=u-boot.bin
+    #   # Forces the kernel loading system to assume a 64-bit kernel.
+    #   arm_64bit=1
+    #   # Run as fast as firmware / board allows.
+    #   arm_boost=1
+    #   # Enable the primary/console UART.
+    #   enable_uart=1
+    #   # Disable Bluetooth.
+    #   dtoverlay=disable-bt
+    #   # Disable WiFi.
+    #   dtoverlay=disable-wifi
+    talosImageURL: factory.talos.dev/installer/308479cc2aa6dcdf74d413d3165efb4b2d92049f82a86d6accc6e4ce015ebbea # configTxtAppend: dtoverlay=disable-bt
+    controlPlane: false
+    networkInterfaces:
+      - interface: end0
+        dhcp: false
+        vlans:
+          - vlanId: 20
+            addresses:
+              - '192.168.20.52/24'
+            routes:
+              - network: '0.0.0.0/0'
+                gateway: '192.168.20.1'
+        mtu: 1500
   - hostname: 'c1'
     ipAddress: '192.168.20.61'
     installDisk: '/dev/sda'
@@ -45,6 +86,10 @@ nodes:
         mtu: 1500
         vip:
           ip: '192.168.20.2'
+    patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
   - hostname: 'c2'
     ipAddress: '192.168.20.62'
     installDisk: '/dev/sda'
@@ -64,6 +109,10 @@ nodes:
         mtu: 1500
         vip:
           ip: '192.168.20.2'
+    patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
   - hostname: 'c3'
     ipAddress: '192.168.20.63'
     installDisk: '/dev/sda'
@@ -83,6 +132,10 @@ nodes:
         mtu: 1500
         vip:
           ip: '192.168.20.2'
+    patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
   - hostname: 'w1'
     ipAddress: '192.168.20.71'
     installDiskSelector:
@@ -102,6 +155,9 @@ nodes:
             gateway: '192.168.20.1'
         mtu: 1500
     patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
       - |-
         machine:
           sysfs:
@@ -125,6 +181,9 @@ nodes:
             gateway: '192.168.20.1'
         mtu: 1500
     patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
       - |-
         machine:
           sysfs:
@@ -139,9 +198,7 @@ patches:
   - '@./patches/global/machine-modules.yaml'
   - '@./patches/global/machine-network.yaml'
   - '@./patches/global/machine-sysctls.yaml'
-  - '@./patches/global/machine-sysfs.yaml'
   - '@./patches/global/machine-time.yaml'
-  - '@./patches/global/machine-udev.yaml'
 
 # Controller patches
 controlPlane:
