@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: qbtools-config-secret
+stringData:
+    config.yaml: ENC[AES256_GCM,data:pGtfgjEg7uswNtqDY/yjbySgFJdwYkWOKHG9m89q7YKQVtGsrG3IQ6HXFPl/uZojAICXbzqfwfpBhnbzoozQ1+D8B2i8lpZpeskPX5EvD/E64NbGj5lDo82FVqC90H001CcvxNmo3SCMBgpmUkhUpVBlX6UrDl/FZ63kik/g+zMvKwjh18bYiPPVMBmaP749MX++GjHDuiwtrGTUYuuWuIQj1dor+CRmR3Z1vnEEDvEkyduOEzlWKaijSlFFe9JH57cT1/RjYt3elhYgbaHookVDqaY+h4yR4OKdG8JvEOvkvSDVZeWXMUuKh/j9s0wBxV5qe3TimNVwIvZZbrfalvfBbRzABjvoiej+LcrHLedtK4lOdxfgnA8n1qhX7fF4xTMycxAioW+4hq0v7H1vlH4WyKIWLH6YW6jzmTYEnJiVWnqMwiY4ufMsEQAA7aXePDqV1mM+J6Bj/4DPD3iAdhBTzrNlp/p58X7JmGb2OHGdRcM2w7gSJ6ILktkLze2E8NiV4OJ7OQF5BFYExxSFq/GG/vikhX2sl/AC+LthIDQWwxI0NHsLccmKn6gkppW3/yXGX3fOgvoyTUJXc4JGIMf2+1KrJ/pm599c9sumC65TO+SgSluMMinICeTe14qk/hDFkBoISOSM1gSUlvZf1aqhF5qvACRvePbetBawrJCoi7kobN7PWds8WfYQAdcqCQTld8Kf1isCaYi7Vn1E8X9AC/s1NZTFXrVisYJtTx4CGGWe4R57guxua6A1XlfKnDTDA0n6/1f9zeWYNX+dZKK1EJM5ujYmYin9c0hS/HuDic+2uQ==,iv:kB6W74xhtYncfMA0FdHA8OGzmsEQjLuTnkCBGoIXi5c=,tag:4y406y8quv/zeOGaLxx4Wg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1j34t6fwv5evlf9gxchc3x9v6zypufszzuynxycrxk4r4jwxtfq9ss9dmtr
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA1YURIeG9EQ0ZDVWdISC9o
+            aVY1TWtsSmpQK1oxc0hucUNXb2Q0MEpGd2k4Ckg1S2wxL1VYRkt6dzZDdHBVV1U0
+            S2MyTzRVdG5LT21kV0lETEZ2Q3pNeDAKLS0tIE1udU9tb2xXa0NBc244bGFhOGtZ
+            MHpvZlVJSnJUTlp6UTN3cWVQbC9VOUUKlUA9Y/QbfgrZNE4NVuOzSU3o1qIOUBO9
+            sSRfbCZX5zB8xfqYcNh1591qxlbcLCQlbIfPVGO8m+RwiAQu2pyM6Q==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-02-10T06:19:49Z"
+    mac: ENC[AES256_GCM,data:tMXUvvG5+yj/S+c9hn9y9tQdeUkwV/2dKsWzQvfZ8i6pwicyW+jwRidbBXKW82CjvORyRYuusCRJTrny0uLMevep10ioS+FhV/T+2Abhm0YEPcjkqk/DEF9rQbXoV4fMsjJa2BR5vseDu86oGZj+4Zh4/FgJ121mtejeC6uerg0=,iv:MSLnQHSxm1IGoUYlbCr7EKRjbc5CsWM0eutj8jS1gjQ=,tag:hYmDElGq4HjzYL2SPibX5Q==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    mac_only_encrypted: true
+    version: 3.9.1

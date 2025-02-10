@@ -31,7 +31,7 @@ spec:
         readOnly: true
     - name: new
       persistentVolumeClaim:
-        claimName: home-assistant
+        claimName: qbittorrent
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 # kubectl scale -n namespace sts sts-name --replicas=0
