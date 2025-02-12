@@ -30,12 +30,8 @@ servers:
           pods insecure
           fallthrough in-addr.arpa ip6.arpa
       - name: forward
-        # default to Unifi/Pihole, but fallback to system dns (1.1.1.1) on bootstrap when PiHole isn't up yet
-        parameters: . dns://192.168.20.1 dns://1.1.1.1
-        configBlock: |-
-          max_fails 2
-          health_check 0.5s
-          policy sequential
+        # use dnsdist to forward depending on if PiHole is up or not
+        parameters: . dns://127.0.0.2:5053
       - name: cache
         parameters: 30
       - name: loop
@@ -54,3 +50,16 @@ tolerations:
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
     effect: NoSchedule
+extraContainers:
+  - name: dnsdist
+    image: docker.io/powerdns/dnsdist-19:1.9.8
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - name: dnsdist
+        mountPath: /etc/dnsdist/dnsdist.conf
+        readOnly: true
+        subPath: dnsdist.conf
+extraVolumes:
+  - name: dnsdist
+    configMap:
+      name: coredns-dnsdist
