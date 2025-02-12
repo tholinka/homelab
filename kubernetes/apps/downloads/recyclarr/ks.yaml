@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app cross-seed
+  name: &app recyclarr
   namespace: &namespace downloads
 spec:
   commonMetadata:
@@ -17,11 +17,11 @@ spec:
     - name: volsync
       namespace: volsync-system
   interval: 30m
-  path: ./kubernetes/apps/downloads/cross-seed/app
+  path: ./kubernetes/apps/downloads/recyclarr/app
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 5Gi
+      VOLSYNC_CAPACITY: 1Gi
   prune: true
   sourceRef:
     kind: GitRepository

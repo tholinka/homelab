@@ -40,10 +40,10 @@ spec:
               tag: 5.0.3@sha256:ef7b54df65ed34aec0809024061fc55b322cc8b3882dfebde499fb3f50f5bb62
             env:
               UMASK: '022'
-              TZ: America/Chicago
+              TZ: ${TIMEZONE}
               QBT_WEBUI_PORT: &port 80
               CROSS_SEED_ENABLED: false
-              CROSS_SEED_HOST: cross-seed.default.svc.cluster.local
+              CROSS_SEED_HOST: cross-seed.downloads.svc.cluster.local
               CROSS_SEED_PORT: 80
               CROSS_SEED_SLEEP_INTERVAL: 0
               PUSHOVER_ENABLED: true
@@ -133,7 +133,7 @@ spec:
               PORT_FORWARD_ONLY: 'on'
               VPN_INTERFACE: tun0
               SERVER_COUNTRIES: 'United States'
-              TZ: 'America/Chicago'
+              TZ: ${TIMEZONE}
               UPDATER_PERIOD: 24h
             envFrom:
               - secretRef:
@@ -205,7 +205,7 @@ spec:
         className: internal
         annotations:
           hajimari.io/appName: qBittorrent
-          hajimari.io/icon: mdi:download
+          hajimari.io/icon: simple-icons:qbittorrent
         hosts:
           - host: qb.${SECRET_DOMAIN}
             paths:

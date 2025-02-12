@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: cross-seed
+  name: unpackerr
 spec:
   interval: 30m
   chart:
@@ -22,36 +22,34 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  dependsOn:
-    - name: qbittorrent
-      namespace: downloads
   values:
     controllers:
-      cross-seed:
+      unpackerr:
         annotations:
           reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
-              repository: ghcr.io/cross-seed/cross-seed
-              tag: 6.10.1@sha256:f8a1e9b66fab89198bf5ac6b242ba75873b9c8e8409107c6f9d455f1f8c10bba
+              repository: ghcr.io/unpackerr/unpackerr
+              tag: 0.14.5@sha256:dc72256942ce50d1c8a1aeb5aa85b6ae2680a36eefd2182129d8d210fce78044
             env:
-              CROSS_SEED_PORT: &port 80
               TZ: ${TIMEZONE}
-            args: ['daemon']
+              UN_WEBSERVER_METRICS: true
+              UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:80
+              UN_WEBSERVER_LOG_FILE: /logs/webserver.log
+              UN_ACTIVITY: true
+              UN_SONARR_0_URL: http://sonarr.downloads.svc.cluster.local
+              UN_SONARR_0_PATHS_0: /media/downloads/qbittorrent/complete/sonarr
+              UN_RADARR_0_URL: http://radarr.downloads.svc.cluster.local
+              UN_RADARR_0_PATHS_0: /media/downloads/qbittorrent/complete/radarr
+            envFrom:
+              - secretRef:
+                  name: unpackerr-secret
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/ping
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+              readiness:
+                enabled: true
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -60,35 +58,30 @@ spec:
               requests:
                 cpu: 10m
               limits:
-                memory: 512Mi
+                memory: 8Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
     service:
       app:
-        controller: cross-seed
+        controller: unpackerr
         ports:
           http:
-            port: *port
+            port: 80
+    serviceMonitor:
+      app:
+        serviceName: unpackerr
+        endpoints:
+          - port: http
     persistence:
-      config:
-        existingClaim: cross-seed
-      secret-file:
-        type: secret
-        name: cross-seed-secret
-        globalMounts:
-          - path: /config/config.js
-            subPath: config.js
-            readOnly: true
+      logs:
+        type: emptyDir
       media:
         type: nfs
         server: nfs.servers.internal
         path: /media
         globalMounts:
-          - path: /media/downloads
-            subPath: downloads
+          - path: /media/downloads/qbittorrent
+            subPath: downloads/qbittorrent

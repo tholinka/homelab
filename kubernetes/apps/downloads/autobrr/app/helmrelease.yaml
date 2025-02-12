@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: cross-seed
+  name: autobrr
 spec:
   interval: 30m
   chart:
@@ -23,29 +23,36 @@ spec:
       strategy: rollback
       retries: 3
   dependsOn:
-    - name: qbittorrent
-      namespace: downloads
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   values:
     controllers:
-      cross-seed:
+      autobrr:
         annotations:
           reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
-              repository: ghcr.io/cross-seed/cross-seed
-              tag: 6.10.1@sha256:f8a1e9b66fab89198bf5ac6b242ba75873b9c8e8409107c6f9d455f1f8c10bba
+              repository: ghcr.io/autobrr/autobrr
+              tag: v1.58.0@sha256:9b11c36605da242933b93dfc0c572bd17fa05af9aba2ae70deafe4977ba8048b
             env:
-              CROSS_SEED_PORT: &port 80
-              TZ: ${TIMEZONE}
-            args: ['daemon']
+              AUTOBRR__HOST: 0.0.0.0
+              AUTOBRR__PORT: &port 80
+              AUTOBRR__METRICS_ENABLED: true
+              AUTOBRR__METRICS_HOST: 0.0.0.0
+              AUTOBRR__METRICS_PORT: &metricsPort 9094
+              AUTOBRR__CHECK_FOR_UPDATES: false
+              AUTOBRR__LOG_LEVEL: INFO
+            envFrom:
+              - secretRef:
+                  name: autobrr-secret
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/ping
+                    path: /api/healthz/liveness
                     port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
@@ -60,7 +67,7 @@ spec:
               requests:
                 cpu: 10m
               limits:
-                memory: 512Mi
+                memory: 256Mi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -68,27 +75,38 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
     service:
       app:
-        controller: cross-seed
+        controller: autobrr
         ports:
           http:
             port: *port
+          metrics:
+            port: *metricsPort
+    serviceMonitor:
+      app:
+        serviceName: autobrr
+        endpoints:
+          - port: metrics
+    ingress:
+      app:
+        className: internal
+        annotations:
+          hajimari.io/appName: autobrr
+          hajimari.io/icon: mdi:cloud-download
+        hosts:
+          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
     persistence:
       config:
-        existingClaim: cross-seed
-      secret-file:
-        type: secret
-        name: cross-seed-secret
+        existingClaim: autobrr
+      config-log:
+        type: emptyDir
         globalMounts:
-          - path: /config/config.js
-            subPath: config.js
-            readOnly: true
-      media:
-        type: nfs
-        server: nfs.servers.internal
-        path: /media
-        globalMounts:
-          - path: /media/downloads
-            subPath: downloads
+          - path: /config/log
+      tmp:
+        type: emptyDir

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
-# from https://github.com/onedr0p/home-ops/blob/main/kubernetes/apps/default/qbittorrent/app/resources/post-process.sh
+# from https://github.com/onedr0p/home-ops/blob/main/kubernetes/apps/default/sabnzbd/app/resources/post-process.sh
 set -euo pipefail
 
 # User-defined variables
