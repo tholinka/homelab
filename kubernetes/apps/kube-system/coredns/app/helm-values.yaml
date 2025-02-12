@@ -31,12 +31,11 @@ servers:
           fallthrough in-addr.arpa ip6.arpa
       - name: forward
         # default to Unifi/Pihole, but fallback to system dns (1.1.1.1) on bootstrap when PiHole isn't up yet
-        parameters: . dns://192.168.1.1
+        parameters: . dns://192.168.20.1 dns://1.1.1.1
         configBlock: |-
           max_fails 2
           health_check 0.5s
-      - name: forward
-        parameters: . /etc/resolv.conf
+          policy sequential
       - name: cache
         parameters: 30
       - name: loop
