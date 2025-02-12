@@ -54,7 +54,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              capabilities: { drop: ['ALL'] }
             resources:
               requests:
                 cpu: 10m
@@ -85,9 +85,11 @@ spec:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: 'external.${SECRET_DOMAIN}'
+          hajimari.io/appName: Echo Server
+          hajimari.io/icon: mdi:forum
         hosts:
-          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
             paths:
               - path: /
                 service:

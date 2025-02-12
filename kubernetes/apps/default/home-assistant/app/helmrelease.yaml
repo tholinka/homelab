@@ -95,6 +95,9 @@ spec:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: 'external.${SECRET_DOMAIN}'
+          hajimari.io/appName: Home Assistant
+          hajimari.io/icon: mdi:microsoft-visual-studio-code
+
         className: external
         hosts:
           - host: ha.${SECRET_DOMAIN}
@@ -105,6 +108,9 @@ spec:
                   port: http
       code-server:
         className: internal
+        annotations:
+          hajimari.io/appName: Home Assistant Code Server
+          hajimari.io/icon: mdi:chess-rook
         hosts:
           - host: ha-code.${SECRET_DOMAIN}
             paths:

@@ -37,7 +37,10 @@ spec:
       ingress:
         enabled: true
         ingressClassName: internal
-        hosts: ["alertmanager.${SECRET_DOMAIN}"]
+        annotations:
+          hajimari.io/appName: Alertmanager
+          hajimari.io/icon: mdi:alert-box
+        hosts: ['alertmanager.${SECRET_DOMAIN}']
         pathType: Prefix
       alertmanagerSpec:
         alertmanagerConfiguration:
@@ -72,7 +75,10 @@ spec:
       ingress:
         enabled: true
         ingressClassName: internal
-        hosts: ["prometheus.${SECRET_DOMAIN}"]
+        annotations:
+          hajimari.io/appName: Prometheus
+          hajimari.io/icon: simple-icons:prometheus
+        hosts: ['prometheus.${SECRET_DOMAIN}']
         pathType: Prefix
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
@@ -107,7 +113,7 @@ spec:
             - action: replace
               regex: (.*)
               replacement: $1
-              sourceLabels: ["__meta_kubernetes_pod_node_name"]
+              sourceLabels: ['__meta_kubernetes_pod_node_name']
               targetLabel: kubernetes_node
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
@@ -122,7 +128,7 @@ spec:
             - action: replace
               regex: (.*)
               replacement: $1
-              sourceLabels: ["__meta_kubernetes_pod_node_name"]
+              sourceLabels: ['__meta_kubernetes_pod_node_name']
               targetLabel: kubernetes_node
     grafana:
       enabled: false

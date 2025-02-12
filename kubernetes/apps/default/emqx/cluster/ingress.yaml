@@ -7,6 +7,9 @@ spec:
   ingressClassName: internal
   rules:
     - host: emqx.${SECRET_DOMAIN}
+      annotations:
+        hajimari.io/appName: EMQX
+        hajimari.io/icon: mdi:quality-medium
       http:
         paths:
           - path: /

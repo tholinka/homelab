@@ -112,6 +112,10 @@ spec:
       app:
         enabled: true
         className: internal
+        annotations:
+          hajimari.io/appName: Capacitor
+          hajimari.io/icon: simple-icons:flux
+          hajimari.io/group: servers
         hosts:
           - host: &host '{{ .Release.Name }}.${SECRET_DOMAIN}'
             paths:

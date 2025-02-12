@@ -29,7 +29,7 @@ spec:
     controllers:
       gatus:
         annotations:
-          reloader.stakater.com/auto: "true"
+          reloader.stakater.com/auto: 'true'
         initContainers:
           init-config:
             image:
@@ -77,7 +77,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              capabilities: { drop: ['ALL'] }
             resources:
               requests:
                 cpu: 100m
@@ -101,9 +101,11 @@ spec:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          hajimari.io/appName: Gatus
+          hajimari.io/icon: mdi:list-status
+          external-dns.alpha.kubernetes.io/target: 'external.${SECRET_DOMAIN}'
         hosts:
-          - host: "status.${SECRET_DOMAIN}"
+          - host: 'status.${SECRET_DOMAIN}'
             paths:
               - path: /
                 service:

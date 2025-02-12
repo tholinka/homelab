@@ -35,6 +35,10 @@ spec:
     ingress:
       dashboard:
         ingressClassName: internal
+        annotations:
+          hajimari.io/appName: Rook
+          hajimari.io/icon: mdi:chess-rook
+          hajimari.io/group: servers
         host:
           name: 'rook.${SECRET_DOMAIN}'
           path: /

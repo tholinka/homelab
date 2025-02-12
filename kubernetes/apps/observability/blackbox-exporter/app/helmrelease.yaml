@@ -27,6 +27,9 @@ spec:
     ingress:
       enabled: true
       className: internal
+      annotations:
+        hajimari.io/appName: Blackbox Exporter
+        hajimari.io/icon: mdi:export-variant
       hosts:
         - host: blackbox-exporter.${SECRET_DOMAIN}
           paths:

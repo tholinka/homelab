@@ -245,6 +245,9 @@ spec:
     ingress:
       enabled: true
       ingressClassName: internal
+      annotations:
+        hajimari.io/appName: Grafana
+        hajimari.io/icon: simple-icons:grafana
       hosts: ['grafana.${SECRET_DOMAIN}']
     persistence:
       enabled: false

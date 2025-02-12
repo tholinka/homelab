@@ -203,6 +203,9 @@ spec:
     ingress:
       app:
         className: internal
+        annotations:
+          hajimari.io/appName: qBittorrent
+          hajimari.io/icon: mdi:download
         hosts:
           - host: qb.${SECRET_DOMAIN}
             paths:

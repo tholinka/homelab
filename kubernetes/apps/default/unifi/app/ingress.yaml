@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: unifi-ingress
   annotations:
+    hajimari.io/appName: Unifi
+    hajimari.io/icon: mdi:router-network
+    hajimari.io/group: servers
     # this is the default, but specifically calling it out, we DO NOT want to validate unifi's certs
     nginx.ingress.kubernetes.io/proxy-ssl-verify: 'off'
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
