@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flaresolverr
+spec:
+  interval: 5m
+  install:
+    timeout: 15m
+    remediation:
+      retries: 5
+  upgrade:
+    timeout: 15m
+    remediation:
+      retries: 5
+      remediateLastFailure: true
+    cleanupOnFail: true
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 5m
+  values:
+    controllers:
+      flaresolverr:
+        type: deployment
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: 'true'
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/flaresolverr/flaresolverr
+              tag: v3.3.21
+            env:
+              TZ: ${TIMEZONE}
+            resources:
+              requests:
+                cpu: 15m
+                memory: 256M
+              limits:
+                memory: 800M
+    service:
+      flaresolverr:
+        controller: flaresolverr
+        ports:
+          http:
+            port: 8191
