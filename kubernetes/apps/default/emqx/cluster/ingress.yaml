@@ -3,13 +3,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: emqx-dashboard
+  annotations:
+    hajimari.io/appName: EMQX
+    hajimari.io/icon: mdi:quality-medium
+    hajimari.io/group: servers
 spec:
   ingressClassName: internal
   rules:
     - host: emqx.${SECRET_DOMAIN}
-      annotations:
-        hajimari.io/appName: EMQX
-        hajimari.io/icon: mdi:quality-medium
       http:
         paths:
           - path: /
