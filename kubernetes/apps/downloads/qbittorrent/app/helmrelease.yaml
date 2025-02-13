@@ -271,9 +271,11 @@ spec:
         type: nfs
         server: nfs.servers.internal
         path: /media
-        globalMounts:
-          - path: /media/downloads/qbittorrent
-            subPath: downloads/qbittorrent
+        advancedMounts:
+          qbittorrent:
+            app:
+              - path: /media/downloads/qbittorrent
+                subPath: downloads/qbittorrent
       addons:
         type: emptyDir
         globalMounts:
