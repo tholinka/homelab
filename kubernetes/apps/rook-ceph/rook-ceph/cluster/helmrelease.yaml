@@ -216,9 +216,7 @@ spec:
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: '0'
             nginx.ingress.kubernetes.io/proxy-request-buffering: 'off'
-            hajimari.io/appName: Rook Object Store
-            hajimari.io/icon: mdi:gate
-            hajimari.io/group: servers
+            hajimari.io/enable: 'false'
           ingressClassName: internal
           host:
             name: rgw.${SECRET_DOMAIN}
