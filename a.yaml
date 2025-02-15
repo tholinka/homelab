@@ -1,0 +1,41 @@
+---
+trackers:
+  - name: BakaBT
+    urls:
+      - bakabt.me
+    required_seed_ratio: 9999
+    required_seed_days: 1 # no requirement
+  - name: HD-Space.org
+    urls:
+      - hd-space.pw
+    required_seed_ratio: 9999
+    required_seed_days: 2 # hard requirement
+  - name: Milkie.cc
+    urls:
+      - milkie.cc
+    required_seed_ratio: 0.1
+    required_seed_days: 1 # no requirement
+  - name: OldToons.World
+    urls:
+      - oldtoons.world
+    required_seed_ratio: 9999
+    required_seed_days: 2 # hard requirement
+  - name: tracker.wtf (nyaa)
+    urls:
+      - tracker.wtf
+    required_seed_ratio: 0.1
+    required_seed_days: 1 # no requirement
+  - name: rarbg.to
+    urls:
+      - rarbg.to
+    required_seed_ratio: 0.1
+    required_seed_days: 1 # no requirement
+# Example:
+# trackers:
+#   - name: iptorrents
+#     urls:
+#     - bgp.technology
+#     - empirehost.me
+#     - stackoverflow.tech
+#    required_seed_ratio: 1.05
+#    required_seed_days: 14.5
