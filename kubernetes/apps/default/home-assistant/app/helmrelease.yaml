@@ -36,7 +36,7 @@ spec:
               repository: ghcr.io/onedr0p/home-assistant
               tag: 2025.2.4@sha256:3a65d7aa966fdca8b49a34b485f3b1ec22b3c7939cbdba5cb3e9ec9f6b2564e0
             env:
-              TZ: America/Chicago
+              TZ: ${TIMEZONE}
               HASS_HTTP_TRUSTED_PROXY_1: 192.168.20.0/24
               HASS_HTTP_TRUSTED_PROXY_2: 10.69.0.0/16
             envFrom:
