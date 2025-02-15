@@ -204,7 +204,7 @@ spec:
         nameOverride: *app
         #type: LoadBalancer
         #annotations:
-        #  lbipam.cilium.io/ips: 192.168.42.122
+        #  lbipam.cilium.io/ips: 192.168.20.122
         ports:
           http:
             primary: true
