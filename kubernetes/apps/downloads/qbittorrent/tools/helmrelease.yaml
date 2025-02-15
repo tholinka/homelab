@@ -94,7 +94,6 @@ spec:
               - *qbittorrent_host
               - --port
               - *qbittorrent_port
-              - --dry-run
 
           unregistered:
             <<: *container
@@ -112,7 +111,6 @@ spec:
               - *qbittorrent_host
               - --port
               - *qbittorrent_port
-              - --dry-run
 
       orphaned:
         type: cronjob
@@ -134,7 +132,6 @@ spec:
               - *qbittorrent_host
               - --port
               - *qbittorrent_port
-              - --dry-run
 
       reannounce:
         containers:
