@@ -3,11 +3,13 @@
 	"extends": [
 		"config:recommended",
 		"docker:enableMajor",
+		"mergeConfidence:all-badges",
+		":disableRateLimiting",
+		":enablePreCommit",
 		":automergeBranch",
 		":dependencyDashboard",
 		":disableRateLimiting",
 		":semanticCommits",
-		":separatePatchReleases",
 		":skipStatusChecks",
 		":timezone(America/Chicago)",
 		"github>tholinka/homelab//.github/renovate/autoMerge.json5",
@@ -22,6 +24,9 @@
 	"dependencyDashboardTitle": "Renovate Dashboard 🤖",
 	"onboarding": false,
 	"requireConfig": "ignored",
+	"commitBodyTable": true,
+	"rebaseWhen": "auto",
+	"timezone": "America/Chicago",
 	"suppressNotifications": [
 		"prEditedNotification",
 		"prIgnoreNotification"

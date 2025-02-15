@@ -15,7 +15,9 @@
 			],
 			"matchPackagePatterns": [
 				"ghcr.io/bjw-s",
-				"ghcr.io/onedr0p"
+				"ghcr.io/bjw-s-labs",
+				"ghcr.io/onedr0p",
+				"ghcr.io/tholinka"
 			]
 		},
 		{
