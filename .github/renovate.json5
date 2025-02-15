@@ -11,7 +11,6 @@
 		":disableRateLimiting",
 		":semanticCommits",
 		":skipStatusChecks",
-		":timezone(America/Chicago)",
 		"github>tholinka/homelab//.github/renovate/autoMerge.json5",
 		"github>tholinka/homelab//.github/renovate/customManagers.json5",
 		"github>tholinka/homelab//.github/renovate/grafanaDashboards.json5",

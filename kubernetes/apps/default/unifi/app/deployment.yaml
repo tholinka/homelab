@@ -50,7 +50,7 @@ spec:
             - name: PUID
               value: '65534'
             - name: TZ
-              value: America/Chicago
+              value: ${TIMEZONE}
           ports:
             - name: device-comm
               containerPort: 8080
