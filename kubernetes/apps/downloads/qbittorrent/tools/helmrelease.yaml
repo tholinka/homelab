@@ -86,6 +86,8 @@ spec:
               - manual
               - --exclude-category
               - cross-seed
+              - --exclude-category
+              - build-buffer
               - --exclude-tag
               - added:24h
               - --include-tag
@@ -103,6 +105,8 @@ spec:
               - manual
               - --exclude-category
               - cross-seed
+              - --exclude-category
+              - build-buffer
               - --exclude-tag
               - added:24h
               - --include-tag
