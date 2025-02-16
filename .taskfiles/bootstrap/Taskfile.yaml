@@ -26,6 +26,96 @@ tasks:
       - test -f {{.SOPS_AGE_KEY_FILE}}
       - test -f {{.TALHELPER_DIR}}/talconfig.yaml
       - which talhelper sops
+  nas:
+    desc: Bootstrap NAS to join the cluster
+    summary: |
+      - ensure you do the configuration that's in kubernetes/bootstrap/talos/patches/global manually!
+        especially the machine-network and machine-files ones!
+      - ensure HAProxy is setup, or KubePrism will cause Cilium to fail:
+        defaults
+          timeout client 10s
+          timeout connect 5s
+          timeout server 10s
+
+        frontend kubeprism
+          mode tcp
+          bind 127.0.0.1:7445
+          default_backend k8s_api
+
+        backend k8s_api
+          mode tcp
+          server lb 192.168.20.2:6443 check
+          server c1 192.168.20.61:6443 check backup
+          server c2 192.168.20.62:6443 check backup
+          server c3 192.168.20.63:6443 check backup
+
+    prompt: Wipe existing K8S install from NAS and re-initialize? Will also reboot the NAS!
+    cmds:
+      # remove existing
+      - cmd: >
+          {{.SSH}} 'systemctl is-active kubelet.service containerd.service 1>/dev/null && sudo systemctl disable kubelet.service containerd.service && sudo reboot && sleep 10'
+        ignore_error: true
+      - until {{.SSH}} -o ConnectTimeout=1 'exit 0'; do sleep 5; done
+      - >
+        {{.SSH}} 'sudo find /var/lib/containerd/io.containerd.snapshotter.v1.btrfs/snapshots/ -maxdepth 1 -type d -exec btrfs subvolume delete {} \; ; sudo rm -rf /etc/kubernetes /etc/cni /var/lib/cni /opt/cni /var/lib/containerd /var/lib/kubelet'
+      # copy files from talos cluster
+      - >
+        {{.TALOS}} cat /etc/kubernetes/kubeconfig-kubelet > "$TMPDIR/kubelet.conf"
+      - >
+        {{.TALOS}} cat /etc/kubernetes/bootstrap-kubeconfig > "$TMPDIR/bootstrap-kubelet.conf"
+      - >
+        {{.TALOS}} cat /etc/kubernetes/pki/ca.crt > $TMPDIR/ca.crt
+      - >
+        sed -i "/server:/ s|:.*|: https://192.168.20.2:6443|g" "$TMPDIR/kubelet.conf" "$TMPDIR/bootstrap-kubelet.conf"
+      - |
+        cat > "$TMPDIR/var-lib-kubelet-config.yaml" <<EOT
+        kind: KubeletConfiguration
+        apiVersion: kubelet.config.k8s.io/v1beta1
+        authentication:
+          anonymous:
+            enabled: false
+          webhook:
+            enabled: true
+          x509:
+            clientCAFile: /etc/kubernetes/pki/ca.crt
+        authorization:
+          mode: Webhook
+        clusterDomain: "$CLUSTER_DOMAIN"
+        clusterDNS: $CLUSTER_DNS
+        runtimeRequestTimeout: "0s"
+        cgroupDriver: systemd
+        containerRuntimeEndpoint: unix:/$SOCKET_PATH
+        EOT
+      - |
+        cat > "$TMPDIR/kubelet.service.override.conf" <<EOT
+        [Service]
+        Environment="KUBELET_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --fail-swap-on=false"
+        EOT
+      - scp -r "$TMPDIR" "nas.servers.internal:$TMPDIR"
+      - >
+        {{.SSH}} "sudo mkdir -p /etc/kubernetes/pki /var/lib/kubelet /etc/systemd/system/kubelet.service.d/ &&
+          sudo mv $TMPDIR/kubelet.conf /etc/kubernetes/kubelet.conf &&
+          sudo mv $TMPDIR/bootstrap-kubelet.conf /etc/kubernetes/bootstrap-kubelet.conf &&
+          sudo mv $TMPDIR/ca.crt /etc/kubernetes/pki/ca.crt &&
+          sudo mv $TMPDIR/var-lib-kubelet-config.yaml /var/lib/kubelet/config.yaml &&
+          sudo mv $TMPDIR/kubelet.service.override.conf /etc/systemd/system/kubelet.service.d/override.conf &&
+          sudo systemctl daemon-reload &&
+          sudo systemctl enable --now containerd.service kubelet.service"
+    vars:
+      SSH: ssh -t nas.servers.internal
+      TALOS: talosctl -n 192.168.20.2
+    env:
+      TMPDIR:
+        sh: mktemp -d
+      CLUSTER_DOMAIN:
+        sh: talosctl -n "192.168.20.2" get kubeletconfig -o jsonpath="{.spec.clusterDomain}"
+      CLUSTER_DNS:
+        sh: talosctl -n "192.168.20.2" get kubeletconfig -o jsonpath="{.spec.clusterDNS}"
+      SOCKET_PATH: /var/run/containerd/containerd.sock
+    preconditions:
+      - talosctl --nodes 192.168.20.2 get machineconfig
+      - ssh nas.servers.internal -o ConnectTimeout=1 'exit 0'
+      - which kubectl talosctl ssh
 
   apps:
     desc: Bootstrap apps into the Talos cluster
