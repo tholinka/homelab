@@ -1,0 +1,20 @@
+---
+services:
+    node-exporter:
+        image: quay.io/prometheus/node-exporter:latest
+        container_name: node-exporter
+        restart: always
+        volumes:
+            - '/:/host:ro,rslave'
+        network_mode: "host"
+        pid: "host"
+        command:
+            - "--path.rootfs=/host"
+    smartctl-exporter:
+      image: quay.io/prometheuscommunity/smartctl-exporter:latest
+      container_name: smartctl-exporter
+      user: '0'
+      privileged: true
+      restart: always
+      ports:
+        - 9633:9633
