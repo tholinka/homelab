@@ -173,10 +173,10 @@ spec:
                     ]
             restartPolicy: Always
             securityContext:
-              # can't be root, or it has no access to tunnel
+              # can't be non-root, or it has no access to tunnel
               runAsNonRoot: false
               runAsUser: 0
-              runasGroup: 0
+              runAsGroup: 0
               capabilities:
                 add:
                   - NET_ADMIN
