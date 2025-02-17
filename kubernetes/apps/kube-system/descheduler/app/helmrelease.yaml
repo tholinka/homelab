@@ -23,6 +23,7 @@ spec:
       strategy: rollback
       retries: 3
   values:
+    timeZone: ${TIMEZONE}
     replicas: 1
     kind: Deployment
     deschedulerPolicyAPIVersion: descheduler/v1alpha2

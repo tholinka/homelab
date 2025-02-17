@@ -37,6 +37,8 @@ spec:
             args:
               - --log-level=info
               - --config=/config/config.yaml
+            env:
+              TZ: ${TIMEZONE}
             resources:
               requests:
                 cpu: 10m
