@@ -45,6 +45,10 @@ tasks:
           matrix:
             PHASE: [Failed, Pending, Succeeded]
         cmd: kubectl delete pods --all-namespaces --field-selector status.phase={{.ITEM.PHASE}} --ignore-not-found=true
+      - for:
+          matrix:
+            PHASE: [successful]
+        cmd: kubectl delete jobs --all-namespaces --field-selector status.{{.ITEM.PHASE}}=1 --ignore-not-found=true
     preconditions:
       - which kubectl
 
