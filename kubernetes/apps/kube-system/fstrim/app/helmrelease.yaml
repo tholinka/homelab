@@ -38,6 +38,7 @@ spec:
               tag: 2025.2.2@sha256:e4a45a5ad0f538554dd8220542f27ec7a9306390f5de68cdebfb02b7a8311fc5
             env:
               SCRIPT_NAME: fstrim.sh
+              TZ: ${TIMEZONE}
             resources:
               requests:
                 cpu: 25m
