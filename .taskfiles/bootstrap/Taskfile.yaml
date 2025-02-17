@@ -29,9 +29,10 @@ tasks:
   nas:
     desc: Bootstrap NAS to join the cluster
     summary: |
+      - See https://github.com/siderolabs/talos/issues/3990 for more info.
       - ensure you do the configuration that's in kubernetes/bootstrap/talos/patches/global manually!
         especially the machine-network and machine-files ones!
-      - ensure HAProxy is setup, or KubePrism will cause Cilium to fail:
+      - ensure HAProxy is setup to mimic KubePrism, or Cilium will fail:
         defaults
           timeout client 10s
           timeout connect 5s
@@ -49,7 +50,7 @@ tasks:
           server c2 192.168.20.62:6443 check backup
           server c3 192.168.20.63:6443 check backup
 
-    prompt: Wipe existing K8S install from NAS and re-initialize? Will also reboot the NAS!
+    prompt: Wipe existing K8S install from NAS and re-initialize? Will also cause a reboot!
     cmds:
       # remove existing
       - cmd: >
@@ -57,7 +58,7 @@ tasks:
         ignore_error: true
       - until {{.SSH}} -o ConnectTimeout=1 'exit 0'; do sleep 5; done
       - >
-        {{.SSH}} 'sudo find /var/lib/containerd/io.containerd.snapshotter.v1.btrfs/snapshots/ -maxdepth 1 -type d -exec btrfs subvolume delete {} \; ; sudo rm -rf /etc/kubernetes /etc/cni /var/lib/cni /opt/cni /var/lib/containerd /var/lib/kubelet'
+        {{.SSH}} 'sudo find /var/lib/containerd/io.containerd.snapshotter.v1.btrfs/snapshots/ -maxdepth 1 -type d -exec btrfs subvolume delete {} \; ; sudo rm -rf /var/local/openebs /etc/kubernetes /etc/cni /var/lib/cni /opt/cni /var/lib/containerd /var/lib/kubelet'
       # copy files from talos cluster
       - >
         {{.TALOS}} cat /etc/kubernetes/kubeconfig-kubelet > "$TMPDIR/kubelet.conf"
