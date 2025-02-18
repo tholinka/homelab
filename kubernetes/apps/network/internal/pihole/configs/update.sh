@@ -1,10 +1,14 @@
 #!/bin/sh
 
+set -e
+
 # use 1.1.1.1 in case there's no dns container up
 #echo "original resolv:" -n
 #cat /etc/resolv.conf
 #echo ""
-#echo "nameserver 1.1.1.1" > /etc/resolv.conf
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+
+apk add --no-cache sqlite
 
 if [ -f "/final/gravity.db" ]; then
 	echo "using symbol link for /etc/pihole, as /final is already setup"
