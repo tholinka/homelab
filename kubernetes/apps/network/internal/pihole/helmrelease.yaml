@@ -24,14 +24,6 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    defaultPodOptions:
-      dnsPolicy: None
-      dnsConfig:
-        nameservers:
-          - '127.0.0.1'
-          - '1.1.1.1'
-          - '1.0.0.1'
-
     controllers:
       pihole:
         enabled: true
@@ -49,29 +41,30 @@ spec:
           init:
             image:
               repository: pihole/pihole
-              tag: '2024.07.0'
+              tag: '2025.02.0'
             command:
               - 'bash'
             args:
               - '-e'
               - /config/update.sh
+            securityContext:
+              allowPrivilegeEscalation: false
 
         containers:
           pihole:
             dependsOn: ['dnscrypt-proxy']
             image:
               repository: 'pihole/pihole'
-              tag: '2024.07.0'
+              tag: '2025.02.0'
             env:
               TZ: ${TIMEZONE}
-              DNSMASQ_LISTENING: all
-              DNSSEC: 'false'
-              PIHOLE_DNS_: 127.0.0.1#5053;127.0.0.1#5053
-              WEBUIBOXEDLAYOUT: traditional
-              WEBTHEME: default-auto
-              WEB_PORT: &pihole-port 80
-              VIRTUAL_HOST: pihole.${SECRET_DOMAIN}
-              WEBPASSWORD: &pihole-password
+              FTLCONF_dns_listeningMode: all
+              FTLCONF_dns_dnssec: 'false'
+              FTLCONF_dns_upstreams: 127.0.0.1#5053;127.0.0.1#5053
+              FTLCONF_webserver_interface_boxed: false
+              FTLCONF_webserver_interface_theme: default-auto
+              FTLCONF_webserver_port: &pihole-port 80
+              FTLCONF_webserver_api_password: &pihole-password
                 valueFrom:
                   secretKeyRef:
                     name: pihole-secret
@@ -82,18 +75,18 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /admin/login.php
+                    path: /admin/login
                     port: *pihole-port
                     scheme: HTTP
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   successThreshold: 1
                   timeoutSeconds: 5
-              startup: *pihole-probes # template has a default failureThreshold of 30
+                  failureThreshold: 30
+              startup: *pihole-probes
               readiness: *pihole-probes
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
             resources:
               limits:
                 cpu: 100m
@@ -126,6 +119,15 @@ spec:
               requests:
                 cpu: 25m
                 memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFileSystem: true
+              capabilities: { drop: ['ALL'] }
+              runAsNonRoot: true
+              runAsUser: 1000
+              runAsGroup: 1000
+              fsGroup: 1000
+              fsGroupChangePolicy: OnRootMismatch
           exporter:
             image:
               repository: ekofr/pihole-exporter
@@ -156,7 +158,15 @@ spec:
                     port: &exporter-port 9617
                   timeoutSeconds: 1
               readiness: *exporter-probes
-
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFileSystem: true
+              capabilities: { drop: ['ALL'] }
+              runAsNonRoot: true
+              runAsUser: 1000
+              runAsGroup: 1000
+              fsGroup: 1000
+              fsGroupChangePolicy: OnRootMismatch
     service:
       web:
         controller: pihole
@@ -201,6 +211,7 @@ spec:
           hajimari.io/appName: PiHole
           hajimari.io/icon: mdi:pi-hole
           hajimari.io/group: servers
+          nginx.ingress.kubernetes.io/app-root: /admin
         hosts:
           - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
             paths:
