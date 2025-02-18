@@ -120,6 +120,13 @@ spec:
         path: /media
         globalMounts:
           - path: /media
+      media-downloads:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media/downloads
+        globalMounts:
+          - path: /media/downloads
+            readOnly: true
       scripts:
         type: configMap
         name: bazarr-scripts

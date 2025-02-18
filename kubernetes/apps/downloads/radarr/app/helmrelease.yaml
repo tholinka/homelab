@@ -117,5 +117,12 @@ spec:
         path: /media
         globalMounts:
           - path: /media
+      media-qbittorrent:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media/downloads/qbittorrent
+        globalMounts:
+          - path: /media/downloads/qbittorrent
+            readOnly: true
       tmp:
         type: emptyDir
