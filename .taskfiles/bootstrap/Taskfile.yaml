@@ -88,19 +88,17 @@ tasks:
         containerRuntimeEndpoint: unix:/$SOCKET_PATH
         EOT
       - |
-        cat > "$TMPDIR/kubelet.service.override.conf" <<EOT
-        [Service]
-        Environment="KUBELET_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --fail-swap-on=false"
+        cat > "$TMPDIR/kubelet.env" <<EOT
+        KUBELET_ARGS="--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --fail-swap-on=false"
         EOT
       - scp -r "$TMPDIR" "nas.servers.internal:$TMPDIR"
       - >
-        {{.SSH}} "sudo mkdir -p /etc/kubernetes/pki /var/lib/kubelet /etc/systemd/system/kubelet.service.d/ &&
+        {{.SSH}} "sudo mkdir -p /etc/kubernetes/pki /var/lib/kubelet &&
           sudo mv $TMPDIR/kubelet.conf /etc/kubernetes/kubelet.conf &&
           sudo mv $TMPDIR/bootstrap-kubelet.conf /etc/kubernetes/bootstrap-kubelet.conf &&
           sudo mv $TMPDIR/ca.crt /etc/kubernetes/pki/ca.crt &&
           sudo mv $TMPDIR/var-lib-kubelet-config.yaml /var/lib/kubelet/config.yaml &&
-          sudo mv $TMPDIR/kubelet.service.override.conf /etc/systemd/system/kubelet.service.d/override.conf &&
-          sudo systemctl daemon-reload &&
+          sudo mv $TMPDIR/kubelet.env /etc/kubernetes/kubelet.env &&
           sudo systemctl enable --now containerd.service kubelet.service"
     vars:
       SSH: ssh -t nas.servers.internal
