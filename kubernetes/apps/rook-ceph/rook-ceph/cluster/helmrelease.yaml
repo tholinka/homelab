@@ -84,7 +84,7 @@ spec:
             memory: 1Gi # default
           requests:
             cpu: 200m
-            memory: 512Mi
+            memory: 768Mi
         mon:
           limits:
             memory: 2Gi # default
