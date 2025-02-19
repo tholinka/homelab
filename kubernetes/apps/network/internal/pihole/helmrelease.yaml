@@ -41,7 +41,7 @@ spec:
           init:
             image:
               repository: pihole/pihole
-              tag: '2025.02.0'
+              tag: '2025.02.1'
             command:
               - 'bash'
             args:
@@ -55,7 +55,7 @@ spec:
             dependsOn: ['dnscrypt-proxy']
             image:
               repository: 'pihole/pihole'
-              tag: '2025.02.0'
+              tag: '2025.02.1'
             env:
               TZ: ${TIMEZONE}
               FTLCONF_dns_listeningMode: all
