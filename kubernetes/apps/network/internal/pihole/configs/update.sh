@@ -80,6 +80,13 @@ comm -13 /tmp/current.list /tmp/tholinka.list | xargs -I{} pihole-FTL sql /etc/p
 
 pihole -g
 
+echo "Updating pihole.toml"
+
+pihole-FTL --config misc.etc_dnsmasq_d true
+pihole-FTL --config dns.blockESNI false
+pihole-FTL --config dns.domain internal
+pihole-FTL --config webserver.domain "pihole.${SECRET_DOMAIN}"
+
 if [ -L /etc/pihole ]; then
 	echo "skipping copying of config, as /etc/pihole is a symlink"
 else
