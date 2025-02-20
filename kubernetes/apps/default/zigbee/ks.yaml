@@ -14,7 +14,7 @@ spec:
     - ../../../../flux/components/volsync
   dependsOn:
     - name: emqx-cluster
-      namespace: default
+      namespace: emqx
     - name: bitwarden-store
       namespace: external-secrets
     - name: volsync

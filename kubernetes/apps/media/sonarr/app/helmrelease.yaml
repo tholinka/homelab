@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: gatus
+  name: sonarr
 spec:
   interval: 30m
   chart:
@@ -27,47 +27,34 @@ spec:
       namespace: rook-ceph
   values:
     controllers:
-      gatus:
+      sonarr:
         annotations:
           reloader.stakater.com/auto: 'true'
-        initContainers:
-          init-config:
-            image:
-              repository: ghcr.io/kiwigrid/k8s-sidecar
-              tag: 1.30.0@sha256:9a326271c439b6f9e174f3b48ed132bbff71c00592c7dbd072ccdc334445bde2
-            env:
-              FOLDER: /config
-              LABEL: gatus.io/enabled
-              NAMESPACE: ALL
-              RESOURCE: both
-              UNIQUE_FILENAMES: true
-              METHOD: WATCH
-            restartPolicy: Always
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 128Mi
         containers:
           app:
             image:
-              repository: ghcr.io/twin/gatus
-              tag: v5.16.0@sha256:bb738c87cf2e2a08b8fff180cfc433e7b8b87bb1779c1fb1b00f8b748673e3c3
+              repository: ghcr.io/onedr0p/sonarr-develop
+              tag: 4.0.13.2931@sha256:2cc6fececf50f6ec4be24ec15dea611261833904f322bbd5e51b6379cbbadf57
             env:
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__APP__THEME: dark
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: 'False'
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 80
+              SONARR__UPDATE__BRANCH: develop
               TZ: ${TIMEZONE}
-              GATUS_CONFIG_PATH: /config
-              GATUS_DELAY_START_SECONDS: 5
-              WEB_PORT: &port 80
             envFrom:
               - secretRef:
-                  name: gatus-secret
+                  name: sonarr-secret
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /health
+                    path: /ping
                     port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
@@ -82,7 +69,7 @@ spec:
               requests:
                 cpu: 100m
               limits:
-                memory: 256Mi
+                memory: 4Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -92,34 +79,56 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        controller: gatus
+        controller: sonarr
         ports:
           http:
             port: *port
     ingress:
       app:
-        className: external
+        className: internal
         annotations:
-          hajimari.io/appName: Gatus
-          hajimari.io/icon: mdi:list-status
-          external-dns.alpha.kubernetes.io/target: 'external.${SECRET_DOMAIN}'
+          hajimari.io/appName: sonarr
+          hajimari.io/icon: simple-icons:sonarr
         hosts:
-          - host: 'status.${SECRET_DOMAIN}'
+          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
             paths:
               - path: /
                 service:
                   identifier: app
                   port: http
-    serviceAccount:
-      create: true
-      name: gatus
     persistence:
       config:
-        existingClaim: gatus
-      config-file:
-        type: configMap
-        name: gatus-configmap
+        existingClaim: sonarr
+      config-cache:
+        existingClaim: sonarr-cache
         globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
+          - path: /config/MediaCover
+      scripts:
+        type: configMap
+        name: sonarr-configmap
+        defaultMode: 0775
+        globalMounts:
+          - path: /scripts/codec-tagger.sh
+            subPath: codec-tagger.sh
             readOnly: true
+          - path: /scripts/pushover-notifier.sh
+            subPath: pushover-notifier.sh
+            readOnly: true
+          - path: /scripts/tba-refresher.sh
+            subPath: tba-refresher.sh
+            readOnly: true
+      media:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media
+        globalMounts:
+          - path: /media
+      media-downloads:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media/downloads
+        globalMounts:
+          - path: /media/downloads
+            readOnly: true
+      tmp:
+        type: emptyDir
