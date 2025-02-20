@@ -46,3 +46,8 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: true
+  healthCheckExprs:
+    - apiVersion: apps.emqx.io/v2beta1
+      kind: EMQX
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')

@@ -19,6 +19,11 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: true
+  healthCheckExprs:
+    - apiVersion: cert-manager.io/v1
+      kind: Certificate
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -43,3 +48,8 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: true
+  healthCheckExprs:
+    - apiVersion: external-secrets.io/v1beta1
+      kind: ClusterSecretStore
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
