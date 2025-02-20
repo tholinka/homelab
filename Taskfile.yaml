@@ -8,12 +8,12 @@ shopt: [globstar]
 vars:
   KUBERNETES_DIR: '{{.ROOT_DIR}}/kubernetes'
   PRIVATE_DIR: '{{.ROOT_DIR}}/.private'
-  TALHELPER_DIR: '{{.ROOT_DIR}}/kubernetes/bootstrap/talos'
-  TALOSCONFIG: '{{.ROOT_DIR}}/kubernetes/bootstrap/talos/clusterconfig/talosconfig'
+  TALHELPER_DIR: '{{.ROOT_DIR}}/talos'
+  TALOSCONFIG: '{{.ROOT_DIR}}/talos/clusterconfig/talosconfig'
+  BOOTSTRAP_DIR: '{{.ROOT_DIR}}/bootstrap'
 
 env:
   KUBECONFIG: '{{.ROOT_DIR}}/kubeconfig'
-  SOPS_AGE_KEY_FILE: '{{.ROOT_DIR}}/age.key'
   BITWARDEN_KEY_FILE: '{{.ROOT_DIR}}/bitwarden.key'
   TALOSCONFIG: '{{.TALOSCONFIG}}'
 

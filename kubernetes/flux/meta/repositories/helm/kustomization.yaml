@@ -20,6 +20,7 @@ resources:
   - ./intel.yaml
   - ./jetstack.yaml
   - ./metrics-server.yaml
+  - ./mittwald.yaml
   - ./mongodb.yaml
   - ./node-feature-discovery.yaml
   - ./openebs.yaml

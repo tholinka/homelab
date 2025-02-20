@@ -33,7 +33,6 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [Bitwarden Secrets Manager](https://github.com/external-secrets/bitwarden-sdk-server/).
 - [ingress-nginx](https://github.com/kubernetes/ingress-nginx): Kubernetes ingress controller using NGINX as a reverse proxy and load balancer.
 - [rook](https://github.com/rook/rook): Distributed block storage for persistent storage.
-- [sops](https://github.com/getsops/sops): Managed secrets for Kubernetes and Terraform which are committed to Git. Stores the secrets required to bootstrap the cluster.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror. No more image pull backoff.
 - [volsync](https://github.com/backube/volsync): Automatic backup and recovery of persistent volume claims to NFS and Cloudflare R2. Lose nothing when the cluster blows up!
 
