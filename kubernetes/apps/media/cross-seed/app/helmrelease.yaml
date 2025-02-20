@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: zwave
+  name: cross-seed
 spec:
   interval: 30m
   chart:
@@ -23,33 +23,34 @@ spec:
       strategy: rollback
       retries: 3
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: qbittorrent
+      namespace: media
   values:
     controllers:
-      zwave:
+      cross-seed:
         annotations:
           reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
-              repository: ghcr.io/zwave-js/zwave-js-ui
-              tag: 9.30.1@sha256:69966e5a4bf1a6c52cb8b1c15037471a47cd07ae4fcdf24bf807019bba9ce2ee
+              repository: ghcr.io/cross-seed/cross-seed
+              tag: 6.11.0@sha256:9993e11574d9b8723852482099e021de34134b0a1d7df6ecf3dad5948ce2464c
             env:
+              CROSS_SEED_PORT: &port 80
               TZ: ${TIMEZONE}
-              PORT: &port 80
+            args: ['daemon']
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /health
+                    path: /api/ping
                     port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
-              startup: *probes # template has a default failureThreshold of 30
+                  failureThreshold: 3
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
@@ -60,59 +61,33 @@ spec:
                 cpu: 10m
               limits:
                 memory: 512Mi
-                squat.ai/gpio: 1
     defaultPodOptions:
-      nodeSelector:
-        kubernetes.io/hostname: p1 # only p1 has the zwave ZAC93-800 GPIO
       securityContext:
-        # needs to be root to access /dev/ttyAMA0
-        # runAsNonRoot: true
-        # runAsUser: 1000
-        # runAsGroup: 1000
-        # fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        controller: zwave
+        controller: cross-seed
         ports:
           http:
             port: *port
-          websocket:
-            port: 3000
-    ingress:
-      app:
-        className: internal
-        annotations:
-          hajimari.io/appName: Z-Wave
-          hajimari.io/icon: mdi:z-wave
-        hosts:
-          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
     persistence:
       config:
-        existingClaim: zwave
+        existingClaim: cross-seed
+      secret-file:
+        type: secret
+        name: cross-seed-secret
         globalMounts:
-          - path: /usr/src/app/store
-      config-cache:
-        existingClaim: zwave-cache
+          - path: /config/config.js
+            subPath: config.js
+            readOnly: true
+      media:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media
         globalMounts:
-          - path: /usr/src/app/store/.config-db
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/src/app/store/logs
-      tmp:
-        type: emptyDir
-    serviceMonitor:
-      app:
-        serviceName: zwave
-        endpoints:
-          - port: http
-            scheme: http
-            path: /metrics
-            interval: 1m
-            scrapeTimeout: 10s
+          - path: /media/downloads
+            subPath: downloads

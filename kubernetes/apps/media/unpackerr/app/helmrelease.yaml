@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: unpoller
+  name: unpackerr
 spec:
   interval: 30m
   chart:
@@ -22,25 +22,31 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  dependsOn:
-    - name: kube-prometheus-stack
-      namespace: observability
   values:
     controllers:
-      unpoller:
+      unpackerr:
+        annotations:
+          reloader.stakater.com/auto: 'true'
         containers:
           app:
             image:
-              repository: ghcr.io/unpoller/unpoller
-              tag: v2.14.1@sha256:9ba73b1793ef332ae9b4b719ef0fc09f231d6276bc7b721cbb47961ed7792961
+              repository: ghcr.io/unpackerr/unpackerr
+              tag: 0.14.5@sha256:dc72256942ce50d1c8a1aeb5aa85b6ae2680a36eefd2182129d8d210fce78044
             env:
               TZ: ${TIMEZONE}
-              UP_UNIFI_DEFAULT_URL: https://192.168.20.5:8443
-              UP_PROMETHEUS_HTTP_LISTEN: 0.0.0.0:80
-              UP_INFLUXDB_DISABLE: true
+              UN_WEBSERVER_METRICS: true
+              UN_WEBSERVER_LISTEN_ADDR: 0.0.0.0:80
+              UN_WEBSERVER_LOG_FILE: /logs/webserver.log
+              UN_ACTIVITY: true
+              UN_SONARR_0_URL: http://sonarr.media.svc.cluster.local
+              UN_SONARR_0_PATHS_0: /media/downloads/qbittorrent/complete/tv
+              UN_SONARR_0_PATHS_1: /media/downloads/qbittorrent/complete/anime
+              UN_RADARR_0_URL: http://radarr.media.svc.cluster.local
+              UN_RADARR_0_PATHS_0: /media/downloads/qbittorrent/complete/movies
+              UN_RADARR_0_PATHS_1: /media/downloads/qbittorrent/complete/anime-movies
             envFrom:
               - secretRef:
-                  name: unpoller-secret
+                  name: unpackerr-secret
             probes:
               liveness:
                 enabled: true
@@ -54,7 +60,7 @@ spec:
               requests:
                 cpu: 10m
               limits:
-                memory: 128Mi
+                memory: 8Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -62,14 +68,22 @@ spec:
         runAsGroup: 1000
     service:
       app:
-        controller: unpoller
+        controller: unpackerr
         ports:
           http:
             port: 80
     serviceMonitor:
       app:
-        serviceName: unpoller
+        serviceName: unpackerr
         endpoints:
           - port: http
-            interval: 2m # Unifi API only polls at 2m intervals
-            scrapeTimeout: 10s
+    persistence:
+      logs:
+        type: emptyDir
+      media:
+        type: nfs
+        server: nfs.servers.internal
+        path: /media
+        globalMounts:
+          - path: /media/downloads/qbittorrent
+            subPath: downloads/qbittorrent

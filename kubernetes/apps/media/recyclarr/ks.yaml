@@ -3,14 +3,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app home-assistant
-  namespace: &namespace default
+  name: &app recyclarr
+  namespace: &namespace media
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../flux/components/gatus/external
     - ../../../../flux/components/volsync
   dependsOn:
     - name: bitwarden-store
@@ -18,12 +17,11 @@ spec:
     - name: volsync
       namespace: volsync-system
   interval: 30m
-  path: ./kubernetes/apps/default/home-assistant/app
+  path: ./kubernetes/apps/media/recyclarr/app
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: ha
-      VOLSYNC_CAPACITY: 5Gi
+      VOLSYNC_CAPACITY: 1Gi
   prune: true
   sourceRef:
     kind: GitRepository
