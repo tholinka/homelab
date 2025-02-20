@@ -6,11 +6,19 @@ tasks:
   generate-config:
     desc: Generate Talos configuration
     dir: '{{.TALHELPER_DIR}}'
-    cmd: talhelper genconfig
+    cmds:
+      # hack so that go-task doesn't template what we want jinja to template
+      # why are we even using jinja here? because doing an `echo $talsecret` outputs nothing... for some reason...
+      - >
+        bws run --no-inherit-env -- minijinja-cli --env <<< {"{ ENV['talsecret'] }}" > {{.FILE}}
+      - talhelper genconfig -s {{ .FILE }}
+      - rm {{.FILE}}
+    vars:
+      FILE:
+        sh: mktemp
     preconditions:
+      - bws project list
       - test -f {{.TALHELPER_DIR}}/talconfig.yaml
-      - test -f {{.ROOT_DIR}}/.sops.yaml
-      - test -f {{.SOPS_AGE_KEY_FILE}}
       - which talhelper
 
   apply-node:
@@ -81,7 +89,7 @@ tasks:
     preconditions:
       - talosctl --nodes {{.IP}} get machineconfig
       - talosctl config info
-      - test -f {{.KUBERNETES_DIR}}/bootstrap/talos/clusterconfig/talosconfig
+      - test -f {{.ROOT_DIR}}/talos/clusterconfig/talosconfig
       - which talosctl
 
   shutdown-cluster:
@@ -94,7 +102,7 @@ tasks:
     preconditions:
       - talosctl --nodes {{.NODES}} get machineconfig
       - talosctl config info
-      - test -f {{.KUBERNETES_DIR}}/bootstrap/talos/clusterconfig/talosconfig
+      - test -f {{.ROOT_DIR}}/talos/clusterconfig/talosconfig
       - which jq talosctl
 
   apply-cluster:

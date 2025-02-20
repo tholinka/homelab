@@ -31,7 +31,6 @@
 		"prIgnoreNotification"
 	],
 	"ignorePaths": [
-		"**/*.sops.*",
 		"**/resources/**"
 	],
 	"flux": {
