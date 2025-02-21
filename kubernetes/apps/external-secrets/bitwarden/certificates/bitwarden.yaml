@@ -33,7 +33,7 @@ metadata:
 spec:
   secretName: *name
   dnsNames:
-    - bitwarden-secrets-manager.external-secrets.svc.cluster.local
+    - bitwarden.external-secrets.svc.cluster.local
   privateKey:
     algorithm: RSA
     encoding: PKCS8

@@ -9,7 +9,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: bitwarden-secrets-manager
+  name: bitwarden
   namespace: external-secrets
 stringData:
   # this can NOT end in a newline or it doesn't work
@@ -20,7 +20,7 @@ kind: Secret
 metadata:
   name: cluster-secrets
   namespace: flux-system
-annotations:
+  annotations:
     replicator.v1.mittwald.de/replicate-to: ".*"
 stringData:
   {{ ENV['cluster-secrets'] | indent(2) | safe }}

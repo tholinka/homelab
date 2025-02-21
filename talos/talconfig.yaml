@@ -213,6 +213,7 @@ nodes:
             devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
 # Global patches
 patches:
+  - '@./patches/global/cluster-manifests.yaml'
   - '@./patches/global/machine-features.yaml'
   - '@./patches/global/machine-files.yaml'
   - '@./patches/global/machine-kubelet.yaml'
