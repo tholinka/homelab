@@ -7,18 +7,11 @@ tasks:
     desc: Generate Talos configuration
     dir: '{{.TALHELPER_DIR}}'
     cmds:
-      # hack so that go-task doesn't template what we want jinja to template
-      # why are we even using jinja here? because doing an `echo $talsecret` outputs nothing... for some reason...
-      - >
-        bws run --no-inherit-env -- minijinja-cli --env <<< {"{ ENV['talsecret'] }}" > {{.FILE}}
-      - talhelper genconfig -s {{ .FILE }}
-      - rm {{.FILE}}
-    vars:
-      FILE:
-        sh: mktemp
+      - bws run --no-inherit-env -- talhelper genconfig
     preconditions:
       - bws project list
       - test -f {{.TALHELPER_DIR}}/talconfig.yaml
+      - test -f {{.TALHELPER_DIR}}/talsecret.yaml
       - which talhelper
 
   apply-node:
