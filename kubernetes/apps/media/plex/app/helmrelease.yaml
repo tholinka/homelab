@@ -101,7 +101,7 @@ spec:
               proxy_http_version      1.1;
             }
           hajimari.io/appName: Plex
-          hajimari.io/icon: mdi:plex
+          hajimari.io/icon: simple-icons:plex
 
         className: external
         hosts:
