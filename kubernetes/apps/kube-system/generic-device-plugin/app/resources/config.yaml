@@ -10,3 +10,8 @@ devices:
     groups:
       - paths:
           - path: /dev/ttyAMA0
+  - name: ups-tripp-lite
+    groups:
+      - usb:
+          - vendor: 09ae
+            product: 2012
