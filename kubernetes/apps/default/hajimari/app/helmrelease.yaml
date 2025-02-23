@@ -66,13 +66,13 @@ spec:
               url: https://kubesearch.dev/
               targetBlank: false
     ingress:
-      app:
+      main:
         enabled: true
         ingressClassName: internal
         annotations:
           hajimari.io/enable: 'false'
         hosts:
-          - host: ${SECRET_DOMAIN}
+          - host: '${SECRET_DOMAIN}'
             paths:
               - path: /
                 pathType: Prefix
