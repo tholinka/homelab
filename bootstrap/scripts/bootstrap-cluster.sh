@@ -272,7 +272,7 @@ function wipe_rook_disks() {
 		if ! disks=$(talosctl --nodes "${node}" get disk --output json 2>/dev/null \
 			| jq --exit-status --raw-output --slurp '. | map(select(.spec.model == env.ROOK_DISK_0 or .spec.model == env.ROOK_DISK_1) | .metadata.id) | join(" ")') || [[ -z "${nodes}" ]];
 		then
-			log error "No disks found" node "${node}" "model=${ROOK_DISK_0} or ${ROOK_DISK_1}"
+			log error "No disks found" "node=${node}" "model=${ROOK_DISK_0} or ${ROOK_DISK_1}"
 		fi
 
 		if [[ -z $disks ]]; then
@@ -310,7 +310,7 @@ function apply_helm_releases() {
 }
 
 function main() {
-	check_env ROOK_DISK_0 ROOK_DISK_1
+	check_env KUBECONFIG ROOK_DISK_0 ROOK_DISK_1
 	check_cli helmfile jq kubectl kustomize minijinja-cli bws talosctl yq
 
 	if ! bws project list &>/dev/null; then

@@ -50,7 +50,7 @@ get_or_create_tag_id() {
         tag_id=$(echo "${new_tag}" | jq --raw-output '.id')
 
         # Update cache
-        existing_tags_cache=$(echo "${existing_tags_cache}" | jq ". += [{\"id\": ${tag_id}, \"label\": \"${tag_label}\"}]")
+        existing_tags_cache=$(echo "${existing_tags_cache}" | jq --exit-status ". += [{\"id\": ${tag_id}, \"label\": \"${tag_label}\"}]")
         TAG_CACHE["$tag_id"]="${tag_label}"
     fi
 
