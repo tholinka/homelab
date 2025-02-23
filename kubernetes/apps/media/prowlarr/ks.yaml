@@ -24,6 +24,8 @@ spec:
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   components:
     - ../../../../flux/components/gatus/guarded
     - ../../../../flux/components/volsync

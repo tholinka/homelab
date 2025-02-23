@@ -28,6 +28,8 @@ spec:
       namespace: mongo
     - name: bitwarden-certificates
       namespace: external-secrets
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   postBuild:
     substitute:
       APP: *app
