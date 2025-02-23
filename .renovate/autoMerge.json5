@@ -3,7 +3,7 @@
 	"packageRules": [
 		{
 			"description": [
-				"Auto-merge container digests updates for trusted containers"
+				"Auto-merge container digests updates"
 			],
 			"matchDatasources": [
 				"docker"
@@ -18,11 +18,12 @@
 				"ghcr.io/bjw-s-labs",
 				"ghcr.io/onedr0p",
 				"ghcr.io/tholinka"
-			]
+			],
+			"ignoreTests": true
 		},
 		{
 			"description": [
-				"Auto-merge GitHub Actions for minor and patch"
+				"Auto-merge GitHub Actions"
 			],
 			"matchManagers": [
 				"github-actions"
@@ -34,8 +35,27 @@
 			"automergeType": "branch",
 			"matchUpdateTypes": [
 				"minor",
+				"patch",
+				"digest"
+			],
+			"ignoreTests": true
+		},
+		{
+			"description": "Auto-merge Helm Releases",
+			"matchDatasources": [
+				"helm",
+				"docker"
+			],
+			"automerge": true,
+			"automergeType": "pr",
+			"matchUpdateTypes": [
+				"minor",
 				"patch"
-			]
+			],
+			"matchDepNames": [
+				"kube-prometheus-stack"
+			],
+			"ignoreTests": false
 		}
 	]
 }
