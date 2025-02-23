@@ -141,26 +141,30 @@ function add_nas_to_cluster() ( #subshell
 	TMPDIR=$(mktemp -d)
 
 	function do_talos() {
-		talosctl -n "$controller"
+		talosctl -n "$controller" "$@"
 	}
-
-	set -x
 
 	# wait for nas to be up
 	until do_ssh -o ConnectTimeout=1 'exit 0';
+		log info "NAS not online, sleeping for 5 seconds..."
 		do sleep 5;
 	done
 
 	## remove existing
 
+	set -x
 	# this can fail
+	# shellcheck disable=SC2015
 	do_ssh 'systemctl is-active kubelet.service containerd.service 1>/dev/null && \
 	sudo systemctl disable kubelet.service containerd.service && \
-	sudo reboot && sleep 10' || true
+	sudo reboot' && sleep 10 || true
 
+	set +x
 	until do_ssh -o ConnectTimeout=1 'exit 0';
+		log info "NAS not online, sleeping for 5 seconds..."
 		do sleep 5;
 	done
+	set -x;
 
 	do_ssh 'sudo find /var/lib/containerd/io.containerd.snapshotter.v1.btrfs/snapshots/ -maxdepth 1 -type d -exec btrfs subvolume delete {} \; ; \
 		sudo rm -rf \
@@ -317,7 +321,7 @@ function main() {
 	apply_talos_config
 	bootstrap_talos
 	fetch_kubeconfig
-	if [[ $ADD_NAS == true ]]; then
+	if [[ $ADD_NAS == 'true' ]]; then
 		add_nas_to_cluster
 	fi
 
