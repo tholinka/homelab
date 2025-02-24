@@ -35,7 +35,6 @@ spec:
               tag: 5.0.3@sha256:0c0310d8266d62debd8c402a3183d646757e9bb982925a7c64be4beea57618f0
             env:
               UMASK: '022'
-              TZ: ${TIMEZONE}
               QBT_WEBUI_PORT: &port 80
               CROSS_SEED_ENABLED: true
               CROSS_SEED_HOST: cross-seed.media.svc.cluster.local
@@ -79,8 +78,6 @@ spec:
               requests:
                 cpu: 10m
                 memory: 25Mi
-            env:
-              TZ: ${TIMEZONE}
           port-forward:
             image:
               repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
@@ -98,7 +95,6 @@ spec:
               CRON_ENABLED: true
               CRON_SCHEDULE: '*/5 * * * *'
               LOG_TIMESTAMP: false
-              TZ: ${TIMEZONE}
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -131,7 +127,6 @@ spec:
               PORT_FORWARD_ONLY: 'on'
               VPN_INTERFACE: tun0
               SERVER_COUNTRIES: 'United States'
-              TZ: ${TIMEZONE}
               UPDATER_PERIOD: 24h
             envFrom:
               - secretRef:
@@ -187,7 +182,6 @@ spec:
               tag: latest@sha256:aad36c623f16850d7cea0171d1aa79d706129191db9e270b6dfd7db6b552c734
             env:
               PROXY_PORT: &proxy-port 8388
-              TZ: ${TIMEZONE}
 
     defaultPodOptions:
       securityContext:

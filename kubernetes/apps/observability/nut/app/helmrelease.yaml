@@ -40,7 +40,6 @@ spec:
                 memory: 256Mi
                 squat.ai/ups-tripp-lite: 1
             env:
-              TZ: ${TIMEZONE}
               DRIVER: 'usbhid-ups'
               DESCRIPTION: 'Main Cluster UPS'
             envFrom:
@@ -51,7 +50,6 @@ spec:
               repository: docker.io/hon95/prometheus-nut-exporter
               tag: '1.2.1'
             env:
-              TZ: ${TIMEZONE}
               HTTP_PATH: &metrics /metrics
               RUST_LOG: debug
             resources:
