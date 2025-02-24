@@ -57,7 +57,6 @@ spec:
               repository: 'pihole/pihole'
               tag: '2025.02.4'
             env:
-              TZ: ${TIMEZONE}
               FTLCONF_dns_listeningMode: all
               FTLCONF_dns_dnssec: 'false'
               FTLCONF_dns_upstreams: 127.0.0.1#5053;127.0.0.1#5053

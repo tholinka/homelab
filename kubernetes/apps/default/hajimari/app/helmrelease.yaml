@@ -31,8 +31,6 @@ spec:
       strategy: RollingUpdate
     podAnnotations:
       configmap.reloader.stakater.com/reload: hajimari-settings
-    env:
-      TZ: ${TIMEZONE}
     hajimari:
       title: Apps
       lightTheme: blackboard

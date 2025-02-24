@@ -49,8 +49,6 @@ spec:
               value: '65534'
             - name: PUID
               value: '65534'
-            - name: TZ
-              value: ${TIMEZONE}
           ports:
             - name: device-comm
               containerPort: 8080
