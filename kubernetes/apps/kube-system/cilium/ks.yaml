@@ -16,7 +16,7 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  wait: true
+  wait: false
   interval: 30m
   timeout: 5m
 ---
@@ -31,8 +31,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: cilium
   path: ./kubernetes/apps/kube-system/cilium/config
   prune: false # never should be deleted
   sourceRef:
