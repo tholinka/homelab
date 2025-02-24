@@ -20,7 +20,7 @@ spec:
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: generic-device-plugin
-      namespace: kube-system
+      namespace: system
   interval: 30m
   path: ./kubernetes/apps/media/qbittorrent/app
   postBuild:
