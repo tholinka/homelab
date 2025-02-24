@@ -20,7 +20,7 @@ spec:
   interval: 30m
   timeout: 5m
   components:
-    - ../../../../flux/components/volsync
+    - ../../../../components/volsync
   dependsOn:
     - name: volsync
       namespace: volsync-system

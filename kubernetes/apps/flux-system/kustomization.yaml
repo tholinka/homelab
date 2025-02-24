@@ -8,4 +8,4 @@ resources:
   - ./config/ks.yaml
   - ./flux-operator/ks.yaml
 components:
-  - ../../flux/components/common
+  - ../../components/common

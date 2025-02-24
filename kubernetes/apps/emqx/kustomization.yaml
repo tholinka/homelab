@@ -6,4 +6,4 @@ namespace: emqx
 resources:
   - ./emqx/ks.yaml
 components:
-  - ../../flux/components/common
+  - ../../components/common
