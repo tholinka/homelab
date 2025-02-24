@@ -1,0 +1,139 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: esphome
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  values:
+    controllers:
+      esphome:
+        annotations:
+          secret.reloader.stakater.com/reload: esphome-secrets,esphome-deploykey
+
+        pod:
+          annotations:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/bjw-s-labs/esphome
+              tag: 2025.2.0@sha256:82aa307c4d88d63a79ab234c63f9313115b2127252cabb81897f57c8c6459825
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 5m
+                memory: 512Mi
+              limits:
+                memory: 3072Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+          code-server:
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.97.2@sha256:6ff0e9cf5a553b3961ece200be75e21e8c887ed0ae28a7c28213722dccf74b0c
+            args:
+              - --auth
+              - none
+              - --disable-telemetry
+              - --disable-update-check
+              - --user-data-dir
+              - /config/.code-server
+              - --extensions-dir
+              - /config/.code-server
+              - --port
+              - '12321'
+              - /config
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 512Mi
+
+    service:
+      app:
+        controller: esphome
+        ports:
+          http:
+            port: 6052
+          code-server:
+            port: 12321
+
+    ingress:
+      app:
+        className: 'internal'
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /$1
+          hajimari.io/appName: ESPHome
+          hajimari.io/icon: simple-icons:esphome
+          hajimari.io/url: https://esphome.${SECRET_DOMAIN}
+        hosts:
+          - host: esphome.${SECRET_DOMAIN}
+            paths:
+              - path: /(.*)
+                service:
+                  identifier: app
+                  port: http
+              - path: /code/(.*)
+                service:
+                  identifier: app
+                  port: code-server
+
+    persistence:
+      config:
+        existingClaim: esphome
+        advancedMounts:
+          esphome:
+            app:
+              - path: /config
+            code-server:
+              - path: /config
+      secrets:
+        type: secret
+        name: esphome-secrets
+        globalMounts:
+          - path: /config/secrets.yaml
+            subPath: secrets.yaml
+      cache:
+        type: emptyDir
+        advancedMounts:
+          esphome:
+            app:
+              - path: /cache
+      deploy-key:
+        type: secret
+        name: esphome-deploykey
+        defaultMode: 256
+        advancedMounts:
+          esphome:
+            code-server:
+              - path: /home/coder/.ssh/id_ed25519
+                subPath: id_ed25519
