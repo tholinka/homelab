@@ -7,4 +7,4 @@ resources:
   - ./mongo/ks.yaml
   - ./unifi-mongo/ks.yaml
 components:
-  - ../../flux/components/common
+  - ../../components/common

@@ -61,7 +61,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../flux/components/gatus/guarded
+    - ../../../../components/gatus/guarded
   path: ./kubernetes/apps/network/internal/pihole
   prune: true
   dependsOn:
@@ -90,8 +90,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../flux/components/gatus/guarded
-    - ../../../../flux/components/volsync
+    - ../../../../components/gatus/guarded
+    - ../../../../components/volsync
   path: ./kubernetes/apps/network/internal/unifi
   postBuild:
     substitute:
