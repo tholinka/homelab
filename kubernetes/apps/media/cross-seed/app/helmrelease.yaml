@@ -37,7 +37,6 @@ spec:
               tag: 6.11.1@sha256:6c89375371f34de3618c061b4a923561801ace0b4c17f8509d9b316c51fd7981
             env:
               CROSS_SEED_PORT: &port 80
-              TZ: ${TIMEZONE}
             args: ['daemon']
             probes:
               liveness: &probes

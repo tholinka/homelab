@@ -19,6 +19,7 @@ resources:
   - ./ingress-nginx.yaml
   - ./intel.yaml
   - ./jetstack.yaml
+  - ./k8tz.yaml
   - ./metrics-server.yaml
   - ./mittwald.yaml
   - ./mongodb.yaml
