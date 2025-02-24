@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: "Labeler"
+name: 'Labeler'
 
 on:
   workflow_dispatch:
   pull_request_target:
-    branches: ["main"]
+    branches: ['main']
 
 jobs:
   labeler:
@@ -17,11 +17,11 @@ jobs:
         uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: "${{ secrets.BOT_APP_ID }}"
-          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+          app-id: '${{ secrets.BOT_APP_ID }}'
+          private-key: '${{ secrets.BOT_APP_PRIVATE_KEY }}'
 
       - name: Labeler
         uses: actions/labeler@v5
         with:
-          repo-token: "${{ steps.app-token.outputs.token }}"
+          repo-token: '${{ steps.app-token.outputs.token }}'
           configuration-path: .github/labeler.yaml
