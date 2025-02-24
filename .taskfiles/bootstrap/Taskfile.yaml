@@ -7,11 +7,11 @@ tasks:
     desc: Bootstrap Talos nodes, NAS node, and Cluster apps
     summary: |
       set `nas: true` if you'd like to wipe and re-initialize the cluster on the nas as well
-    cmd: bash {{.BOOTSTRAP_DIR}}/scripts/bootstrap-cluster.sh
+    cmd: bash "{{.BOOTSTRAP_DIR}}/scripts/bootstrap-cluster.sh"
     env:
       ROOK_DISK_0: SPCC M.2 PCIe SSD
       ROOK_DISK_1: SPCC M.2 SSD
-      ADD_NAS: '{{.ADD_NAS}}'
+      ADD_NAS: '{{.nas}}'
     requires:
       vars: [nas]
     preconditions:
