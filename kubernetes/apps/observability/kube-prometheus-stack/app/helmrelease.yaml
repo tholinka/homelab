@@ -15,37 +15,32 @@ spec:
         name: prometheus-community
         namespace: flux-system
   install:
-    crds: Skip
     remediation:
       retries: 3
   upgrade:
     cleanupOnFail: true
-    crds: Skip
     remediation:
       strategy: rollback
       retries: 3
-  dependsOn:
-    - name: prometheus-operator-crds
-      namespace: observability
   values:
     crds:
-      enabled: false
+      enabled: true
+      upgradeJob:
+        enabled: true
+        forceConflicts: true
     cleanPrometheusOperatorObjectNames: true
     alertmanager:
       ingress:
         enabled: true
         ingressClassName: internal
-        annotations:
-          hajimari.io/appName: Alertmanager
-          hajimari.io/icon: mdi:alert-box
-        hosts: ['alertmanager.${SECRET_DOMAIN}']
+        hosts: ['alertmanager.devbu.io']
         pathType: Prefix
       alertmanagerSpec:
         alertmanagerConfiguration:
           name: alertmanager
           global:
             resolveTimeout: 5m
-        externalUrl: https://alertmanager.${SECRET_DOMAIN}
+        externalUrl: https://alertmanager.devbu.io
         storage:
           volumeClaimTemplate:
             spec:
@@ -73,10 +68,7 @@ spec:
       ingress:
         enabled: true
         ingressClassName: internal
-        annotations:
-          hajimari.io/appName: Prometheus
-          hajimari.io/icon: simple-icons:prometheus
-        hosts: ['prometheus.${SECRET_DOMAIN}']
+        hosts: ['prometheus.devbu.io']
         pathType: Prefix
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
@@ -150,5 +142,15 @@ spec:
                 annotations:
                   summary: Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
                 expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
+                labels:
+                  severity: critical
+      zfs-rules:
+        groups:
+          - name: zfs
+            rules:
+              - alert: ZfsUnexpectedPoolState
+                annotations:
+                  summary: ZFS pool {{$labels.zpool}} on {{$labels.instance}} is in a unexpected state {{$labels.state}}
+                expr: node_zfs_zpool_state{state!="online"} > 0
                 labels:
                   severity: critical
