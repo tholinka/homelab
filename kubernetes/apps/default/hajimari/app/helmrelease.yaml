@@ -70,7 +70,7 @@ spec:
         annotations:
           hajimari.io/enable: 'false'
         hosts:
-          - host: '${SECRET_DOMAIN}'
+          - host: tholinka.dev # using root level ${SECRET_DOMAIN} breaks flux-local
             paths:
               - path: /
                 pathType: Prefix
