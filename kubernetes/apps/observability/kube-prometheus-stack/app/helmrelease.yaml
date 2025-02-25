@@ -152,3 +152,19 @@ spec:
                 expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
                 labels:
                   severity: critical
+      btrfs-rules:
+        groups:
+          - name: btrfs
+            rules:
+              - alert: BtrfsDeviceErrorsDetected
+                annotations:
+                  sumamry: BTRFS device {{$labels.device}} on {{$labels.kubernetes_node}}@{{$labels.instance}} detected an error of type {{$labels.type}}
+                expr: node_btrfs_device_errors_total > 0
+                labels:
+                  severity: critical
+              - alert: BtrfsDeviceAlmostFull
+                annotations:
+                  summary: BTRFS device {{$labels.device}} on {{$labels.kubernetes_node}}@{{$labels.instance}} has less than 10GB of free space left
+                expr: node_btrfs_device_unused_bytes < 10000000000
+                labels:
+                  severity: critical
