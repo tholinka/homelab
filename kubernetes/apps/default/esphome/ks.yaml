@@ -24,6 +24,8 @@ spec:
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   components:
     - ../../../../components/volsync
   postBuild:
