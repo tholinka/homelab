@@ -215,11 +215,16 @@ spec:
             - { name: DS_PROMETHEUS, value: Prometheus }
             - { name: VAR_REPLICATIONDESTNAME, value: .*-dst }
         pihole-exporter:
-          # renovate: depName="VolSync"
+          # renovate: depName="Pi-hole Exporter"
           gnetId: 10176
           revision: 3
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
+        prometheus-nut-exporter:
+          # renovate: depName="Prometheus NUT Exporter"
+          gnetId: 14371
+          revision: 1
+          datasource: Prometheus
     sidecar:
       dashboards:
         enabled: true
