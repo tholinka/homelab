@@ -211,6 +211,32 @@ nodes:
           sysfs:
             devices.system.cpu.cpu4.cpufreq.energy_performance_preference: balance_performance
             devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
+  - hostname: 'w4'
+    ipAddress: '192.168.20.74'
+    installDisk: /dev/sda
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615 # i915, intel-ucode, mei, thunderbolt
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: '80:e8:2c:29:1a:dd'
+        dhcp: false
+        addresses:
+          - '192.168.20.74/24'
+        routes:
+          - network: '0.0.0.0/0'
+            gateway: '192.168.20.1'
+        mtu: 1500
+    patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
+      - |-
+        machine:
+          sysfs:
+            devices.system.cpu.cpu4.cpufreq.energy_performance_preference: balance_performance
+            devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
 # Global patches
 patches:
   - '@./patches/global/cluster-manifests.yaml'
