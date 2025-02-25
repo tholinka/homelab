@@ -102,27 +102,29 @@ graph TD
     B3 --> |Depends on| E1
 ```
 
-## 🛜 Networking
+## 🌐 Networking
 
 ```mermaid
 graph TD
   A>AT&T Fiber]
   A --> |😭|A1([Only gives a /64 per request, so no IPv6 on VLANs on UniFi])
-  A --> |1Gb/1Gb| R
+  A --> |1Gb/1Gb on a 2.5GbE link| R
   B>T-Mobile Home Internet - Wireless] --> |Failover, 300ish down| R
   B --> |😭|B1([No IPv6 at all on UniFi])
   R>UniFi Gateway Max <br> 2 WAN ports, 3 LAN ports <br> @ 2.5 GbE]
   R --> |2.5GbE| S1
-  R --> |2.5GbE<br>VLAN20| S2
-  S1>UniFi Switch Flex 2.5G PoE <br> 8 ports, 1 10 GbE uplink]
-  S2>UniFi Switch Flex 2.5G PoE <br> 8 ports, 1 10 GbE uplink]
+  R --> |2.5GbE<br>VLAN servers| S2
+  S1>UniFi Switch Flex <br> 8x 2.5G PoE ports, 1x 10 GbE uplink]
+  S2>USW Pro HD 24 <br> 22x 2.5GbE ports, 2x 10GbE port, 4 10G SFP+ ports]
   S1 --> |2.5GbE| W
   W>UniFi U7 Pro]
   W --> |WiFi|W1([ssid])
   W --> |IoT WiFi<br>VLAN iot|W2([ssid iot])
   S1 --> D([Devices])
-  S2 --> K([7 Kubernetes nodes])
-  S2 --> N([NAS])
+  S2 -->|2.5GbE| K([7 Kubernetes nodes])
+  S2 -->|1GbE| P([Raspberry Pi 4b with Z-Wave GPIO Hat])
+  S2 -->|1GbE| KVM([PiKVM v3])
+  S2 --> |2x 10G SFP+ Bonded| N([NAS])
 ```
 
 ### 🏘️ VLANs
