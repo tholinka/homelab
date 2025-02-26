@@ -29,6 +29,15 @@ spec:
             env:
               HTTP_PATH: &metrics /metrics
               RUST_LOG: debug
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+                custom: false
+              startup:
+                enabled: true
+                custom: false
             resources:
               requests:
                 cpu: 15m
