@@ -56,7 +56,9 @@ metrics:
     # and it also doesn't match what a smart plug shows (which is in between the two values)
     # I'm assuming it's because of how it's trying to calculate the wattage @ 12volts for the battery vs wattage @ 120v for the wall power or something
     # either way, divide by 1.4 or subtracting 400 seems about right to make the numbers at least somewhat correct according to a smart plug
-    query: round(nut_power_nominal_watts * nut_load / 1.4, 0.1)
+    # which results in nut_power_nominal_watts * nut_load / 1.4
+    # or we can just directly use the smart plug, if we pull it from HA
+    query: round(ha_sensor_power_w{entity="sensor.cluster_outlet_current_consumption"}, 0.1)
     title: Power
     suffix: 'w'
     colors:
