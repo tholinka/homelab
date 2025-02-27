@@ -1,0 +1,146 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: unifi
+  namespace: network
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      app:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        labels: {}
+        replicas: 1
+        strategy: RollingUpdate
+        rollingUpdate:
+          unavailable: 1
+          surge: 1
+
+        containers:
+          app:
+            image:
+              repository: 'lscr.io/linuxserver/unifi-network-application'
+              tag: '9.0.114-ls77'
+            env:
+              MEM_LIMIT: '1024'
+              MEM_STARTUP: '1024'
+              MONGO_DBNAME: unifi
+              MONGO_HOST: unifi-mongo-0.unifi-mongo-svc.mongo.svc.cluster.local
+              MONGO_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: unifi-secret
+                    key: password
+              MONGO_PORT: '27017'
+              MONGO_USER: unifi
+              PGID: '65534'
+              PUID: '65534'
+              S6_READ_ONLY_ROOT: '1'
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: false
+              startup: *probes
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFileSystem: true
+            resources:
+              requests:
+                memory: '1024Mi'
+                cpu: '100m'
+              limits:
+                memory: '1500Mi'
+                cpu: '512m'
+    service:
+      app:
+        controller: app
+        type: LoadBalancer
+        internalTrafficPolicy: Cluster
+        externalTrafficPolicy: Cluster
+        annotations:
+          lbipam.cilium.io/ips: '192.168.20.5'
+        ports:
+          http:
+            primary: true
+            port: 8080
+            protocol: HTTP
+          stun:
+            primary: false
+            port: 3478
+            protocol: UDP
+          https:
+            primary: false
+            port: 8443
+            protocol: HTTPS
+          secure-redirect:
+            primary: false
+            port: 8843
+            protocol: HTTPS
+          http-redirect:
+            primary: false
+            port: 8880
+            protocol: HTTP
+          speedtest:
+            primary: false
+            port: 6789
+            protocol: TCP
+          unifi-disc:
+            primary: false
+            port: 10001
+            protocol: UDP
+          unifi-disc-12:
+            primary: false
+            port: 1900
+            protocol: UDP
+          syslog:
+            primary: false
+            protocol: UDP
+            port: 5514
+    ingress:
+      app:
+        className: internal
+        annotations:
+          hajimari.io/appName: Unifi
+          hajimari.io/icon: mdi:router-network
+          hajimari.io/group: servers
+          # this is the default, but specifically calling it out, we DO NOT want to validate unifi's certs
+          nginx.ingress.kubernetes.io/proxy-ssl-verify: 'off'
+          nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+          nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+          nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+        hosts:
+          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: https
+    persistence:
+      config:
+        existingClaim: unifi
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
