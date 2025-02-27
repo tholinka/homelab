@@ -5,6 +5,7 @@ kind: HelmRelease
 metadata:
   name: k8tz
 spec:
+  interval: 1h
   chart:
     spec:
       chart: k8tz
@@ -14,7 +15,6 @@ spec:
         kind: HelmRepository
         name: k8tz
         namespace: flux-system
-  interval: 30m
   values:
     namespace: system-controllers
 

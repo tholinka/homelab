@@ -18,7 +18,8 @@ spec:
       namespace: volsync-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/media/recyclarr/app
   postBuild:
     substitute:

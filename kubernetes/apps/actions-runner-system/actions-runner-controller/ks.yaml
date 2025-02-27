@@ -12,7 +12,8 @@ spec:
   dependsOn:
     - name: bitwarden-store
       namespace: external-secrets
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/actions-runner-system/actions-runner-controller/app
   prune: true
   sourceRef:
@@ -33,7 +34,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/actions-runner-system/actions-runner-controller/runners
   prune: true
   sourceRef:

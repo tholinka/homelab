@@ -12,7 +12,8 @@ spec:
   dependsOn:
     - name: bitwarden-store
       namespace: external-secrets
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/emqx/emqx/app
   prune: true
   sourceRef:
@@ -36,7 +37,8 @@ spec:
   dependsOn:
     - name: emqx
       namespace: emqx
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/emqx/emqx/cluster
   prune: true
   sourceRef:
