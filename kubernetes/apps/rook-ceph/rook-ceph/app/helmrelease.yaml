@@ -23,9 +23,9 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  # dependsOn:
-  #   - name: snapshot-controller
-  #     namespace: volsync-system
+  dependsOn:
+    - name: snapshot-controller
+      namespace: volsync-system
   values:
     csi:
       cephFSKernelMountOptions: ms_mode=prefer-crc
@@ -36,47 +36,47 @@ spec:
         - name : driver-registrar
           resource:
             requests:
-              memory: 16Mi
-              cpu: 50m
+              memory: 16Mi # 128Mi is default
+              cpu: 50m # default
             limits:
-              memory: 256Mi
+              memory: 256Mi # default
         - name : csi-rbdplugin
           resource:
             requests:
-              memory: 128Mi
-              cpu: 250m
+              memory: 128Mi # 512Mi is default
+              cpu: 250m # default
             limits:
-              memory: 1Gi
+              memory: 1Gi # Default
         - name : liveness-prometheus
           resource:
             requests:
-              memory: 64Mi
-              cpu: 50m
+              memory: 64Mi # 128Mi is default
+              cpu: 50m # default
             limits:
-              memory: 256Mi
+              memory: 256Mi # default
       csiCephFSPluginResource: |
         - name : driver-registrar
           resource:
             requests:
-              memory: 16Mi
-              cpu: 50m
+              memory: 16Mi # 128Mi is default
+              cpu: 50m # default
             limits:
-              memory: 256Mi
+              memory: 256Mi # default
         - name : csi-cephfsplugin
           resource:
             requests:
-              memory: 128Mi
-              cpu: 250m
+              memory: 128Mi # 512Mi is default
+              cpu: 250m # default
             limits:
-              memory: 1Gi
+              memory: 1Gi # default
         - name : liveness-prometheus
           resource:
             requests:
-              memory: 64Mi
-              cpu: 50m
+              memory: 64Mi # 128Mi is default
+              cpu: 50m # default
             limits:
-              memory: 256Mi
-        enableDiscoveryDaemon: true
+              memory: 256Mi # default
+    enableDiscoveryDaemon: true
     monitoring:
       enabled: true
     resources:

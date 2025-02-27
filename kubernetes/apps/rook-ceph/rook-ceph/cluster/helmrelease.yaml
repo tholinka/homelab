@@ -75,7 +75,7 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        devicePathFilter: ^/dev/disk/by-id/(ata-SPCC_M.2_SSD_SP|nvme-SPCC_M.2_PCIe_SSD_FF).*
+        devicePathFilter: ^/dev/disk/by-id/(ata-SPCC_M.2_SSD_|nvme-SPCC_M.2_PCIe_SSD_).*
         config:
           osdsPerDevice: '1'
       resources:
@@ -83,20 +83,20 @@ spec:
           limits:
             memory: 1Gi # default
           requests:
-            cpu: 200m
-            memory: 768Mi
+            cpu: 200m # 500m is default
+            memory: 768Mi #512Mi is default
         mon:
           limits:
             memory: 2Gi # default
           requests:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 500m # 1000m is default
+            memory: 512Mi # 1Gi is default
         osd:
           limits:
             memory: 4Gi # default
           requests:
-            cpu: 500m
-            memory: 1Gi
+            cpu: 500m # 1000m is default
+            memory: 1Gi # 4Gi is default
     cephBlockPools:
       - name: ceph-blockpool
         spec:

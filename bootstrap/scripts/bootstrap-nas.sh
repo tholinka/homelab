@@ -55,7 +55,8 @@ function wipe_rook_disks() {
 		return
 	fi
 
-	do_ssh 'nvme format --lbaf=1 /dev/nvme-SPCC_M.2_PCIe_SSD* --force && nvme format --block-size=4096 /dev/nvme-SPCC_M.2_PCIe_SSD* --force'
+	# this needs to match the regex in rook-ceph cluster's helmrelease
+	do_ssh 'find /dev/disk/by-id/ -regextype posix-extended -regex "^/dev/disk/by-id/(nvme-SPCC_M.2_PCIe_SSD).*" -not -name "*_[0-9]" -not -name "*-part[0-9]" | xargs -I% sh -c "nvme format --lbaf=1 % --force && nvme format --block-size=4096 % --force"'
 
 	log "Wiped Ceph drive"
 }
