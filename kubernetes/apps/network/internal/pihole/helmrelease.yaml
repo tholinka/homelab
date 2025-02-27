@@ -24,6 +24,9 @@ spec:
       strategy: rollback
       retries: 3
   values:
+    defaultPodOptions:
+      annotations:
+        kubectl.kubernetes.io/default-container: pihole
     controllers:
       pihole:
         enabled: true
@@ -97,23 +100,22 @@ spec:
             image:
               repository: 'klutchell/dnscrypt-proxy'
               tag: 'bf6756750f17fc20796c7807387ac1ed6b6902b1'
-            # probes:
-            #   liveness: &dnscrypt-probes
-            #     enabled: true
-            #     custom: true
-            #     spec:
-            #       failureThreshold: 3
-            #       initialDelaySeconds: 60
-            #       periodSeconds: 20
-            #       successThreshold: 1
-            #       exec:
-            #         command:
-            #           - nslookup # nslookup doesn't exist in this image, and there's no such thing as a udp port for k8s probes
-            #           - -po=5053
-            #           - cloudflare.com
-            #           - '127.0.0.1'
-            #       timeoutSeconds: 1
-            #   readiness: *dnscrypt-probes
+            probes:
+              liveness: &dnscrypt-probes
+                enabled: true
+                custom: true
+                spec:
+                  failureThreshold: 3
+                  initialDelaySeconds: 60
+                  periodSeconds: 20
+                  successThreshold: 1
+                  exec:
+                    command:
+                      - /usr/local/bin/dnsprobe
+                      - cloudflare.com
+                      - '127.0.0.1:5053'
+                  timeoutSeconds: 1
+              readiness: *dnscrypt-probes
             resources:
               requests:
                 cpu: 25m
@@ -167,13 +169,24 @@ spec:
               fsGroup: 1000
               fsGroupChangePolicy: OnRootMismatch
     service:
-      web:
+      pihole:
         controller: pihole
-        type: ClusterIP
+        type: LoadBalancer
         internalTrafficPolicy: Cluster
-        ipFamilyPolicy: PreferDualStack
-
+        externalTrafficPolicy: Cluster
+        #ipFamilyPolicy: PreferDualStack
+        annotations:
+          #lbipam.cilium.io/ips: '192.168.20.6,fdaa:aaaa:aaaa:aa20::6
+          lbipam.cilium.io/ips: '192.168.20.6'
         ports:
+          dns-udp:
+            primary: false
+            port: 53
+            protocol: UDP
+          dns-tcp:
+            primary: false
+            port: 53
+            protocol: TCP
           http:
             primary: true
             port: *pihole-port
@@ -183,26 +196,9 @@ spec:
             port: 443
             protocol: HTTPS
           prometheus:
+            primary: false
             port: *exporter-port
             protocol: HTTP
-      pihole:
-        controller: pihole
-        type: LoadBalancer
-        internalTrafficPolicy: Cluster
-        externalTrafficPolicy: Cluster
-        #ipFamilyPolicy: PreferDualStack
-        annotations:
-          #lbipam.cilium.io/ips: '192.168.20.6,fdaa:aaaa:aaaa:aa20::6'
-          lbipam.cilium.io/ips: '192.168.20.6'
-        ports:
-          dns-udp:
-            primary: false
-            port: 53
-            protocol: UDP
-          # dns-tcp:
-          #   primary: false
-          #   port: 53
-          #   protocol: TCP
     ingress:
       pihole:
         className: internal
@@ -216,11 +212,11 @@ spec:
             paths:
               - path: /
                 service:
-                  identifier: web
+                  identifier: pihole
                   port: http
     serviceMonitor:
       pihole:
-        serviceName: pihole-web
+        serviceName: pihole
         endpoints:
           - port: prometheus # exporter-port's name
             scheme: http
