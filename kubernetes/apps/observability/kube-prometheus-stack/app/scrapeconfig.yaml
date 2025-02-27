@@ -5,6 +5,13 @@ kind: ScrapeConfig
 metadata:
   name: &name zigbee-controller
 spec:
+  basicAuth:
+    username:
+      name: scrape-target-zigbee-secret
+      key: USERNAME
+    password:
+      name: scrape-target-zigbee-secret
+      key: PASSWORD
   staticConfigs:
     - targets:
         - zigbee.iot.internal
