@@ -9,9 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
   interval: 1h
   retryInterval: 2m
   path: ./kubernetes/apps/network/internal/external-dns
@@ -66,9 +63,6 @@ spec:
     - ../../../../components/gatus/guarded
   path: ./kubernetes/apps/network/internal/pihole
   prune: true
-  dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
   postBuild:
     substitute:
       APP: *app

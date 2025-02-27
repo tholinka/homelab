@@ -15,8 +15,6 @@ spec:
   dependsOn:
     - name: emqx-cluster
       namespace: emqx
-    - name: bitwarden-store
-      namespace: external-secrets
     - name: volsync
       namespace: volsync-system
     - name: rook-ceph-cluster

@@ -13,8 +13,6 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
     - name: volsync
       namespace: volsync-system
     - name: rook-ceph-cluster
