@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -Eeuo pipefail
 
 # use 1.1.1.1 in case there's no dns container up
 #echo "original resolv:" -n
