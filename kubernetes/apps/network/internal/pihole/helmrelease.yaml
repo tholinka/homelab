@@ -43,8 +43,8 @@ spec:
         initContainers:
           init:
             image:
-              repository: pihole/pihole
-              tag: '2025.02.6'
+              repository: ghcr.io/pi-hole/pihole
+              tag: 2025.02.6@sha256:bcf79fe65348067d17b7b14fd7e2cb8177bbb4e972e1880a905169334e69c1a2
             command:
               - 'bash'
             args:
@@ -57,8 +57,8 @@ spec:
           pihole:
             dependsOn: ['dnscrypt-proxy']
             image:
-              repository: 'pihole/pihole'
-              tag: '2025.02.6'
+              repository: ghcr.io/pi-hole/pihole
+              tag: 2025.02.6@sha256:bcf79fe65348067d17b7b14fd7e2cb8177bbb4e972e1880a905169334e69c1a2
             env:
               FTLCONF_dns_listeningMode: all
               FTLCONF_dns_dnssec: 'false'
@@ -98,8 +98,8 @@ spec:
                 memory: 128Mi
           dnscrypt-proxy:
             image:
-              repository: 'klutchell/dnscrypt-proxy'
-              tag: 'bf6756750f17fc20796c7807387ac1ed6b6902b1'
+              repository: ghcr.io/klutchell/dnscrypt-proxy
+              tag: main@sha256:acf933ed62dfd332d93c453875b0dabaf892d41c5f11ddc13e456b5346084031
             probes:
               liveness: &dnscrypt-probes
                 enabled: true
