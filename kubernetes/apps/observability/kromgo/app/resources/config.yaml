@@ -67,7 +67,7 @@ metrics:
       - { color: 'red', min: 751, max: 9999 }
 
   - name: cluster_age_days
-    query: round((time() - max(kube_node_created) ) / 86400)
+    query: round((time() - min(kube_node_created) ) / 86400)
     title: Age
     suffix: 'd'
     colors:
