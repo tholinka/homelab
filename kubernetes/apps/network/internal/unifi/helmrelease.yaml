@@ -40,8 +40,8 @@ spec:
         containers:
           app:
             image:
-              repository: 'lscr.io/linuxserver/unifi-network-application'
-              tag: '9.0.114-ls77'
+              repository: ghcr.io/linuxserver/unifi-network-application
+              tag: 9.0.114@sha256:8990fe661fc5b4677d38eaf1321012f2a4322d965540051db8104d6a8329952b
             env:
               MEM_LIMIT: '1024'
               MEM_STARTUP: '1024'
