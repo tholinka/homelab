@@ -17,7 +17,8 @@ spec:
     name: flux-system
     namespace: flux-system
   wait: false
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   timeout: 5m
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
@@ -38,7 +39,8 @@ spec:
     name: flux-system
     namespace: flux-system
   wait: true
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   timeout: 5m
   healthCheckExprs:
     - apiVersion: cert-manager.io/v1
@@ -66,7 +68,8 @@ spec:
     name: flux-system
     namespace: flux-system
   wait: true
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   timeout: 15m
   healthCheckExprs:
     - apiVersion: cert-manager.io/v1
