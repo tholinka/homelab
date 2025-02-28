@@ -13,13 +13,12 @@ spec:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
   dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/media/jellyseerr/app
   postBuild:
     substitute:

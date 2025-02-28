@@ -6,7 +6,7 @@ metadata:
   name: kubernetes-replicator
   namespace: system-controllers
 spec:
-  interval: 30m
+  interval: 1h
   chart:
     spec:
       # renovate: registryUrl=https://windmill-labs.github.io/windmill-helm-charts/

@@ -9,10 +9,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/rook-ceph/rook-ceph/app
   prune: false
   sourceRef:
@@ -35,9 +33,6 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
-  dependsOn:
-    - name: bitwarden-store
-      namespace: external-secrets
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -52,7 +47,8 @@ spec:
       kind: CephCluster
       failed: status.ceph.health == 'HEALTH_ERR'
       current: status.ceph.health in ['HEALTH_OK','HEALTH_WARN']
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   path: ./kubernetes/apps/rook-ceph/rook-ceph/cluster
   postBuild:
     substitute:

@@ -10,7 +10,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
-  interval: 30m
+  interval: 1h
+  retryInterval: 2m
   timeout: 5m
   path: './kubernetes/apps/system-controllers/k8tz/app'
   prune: true
