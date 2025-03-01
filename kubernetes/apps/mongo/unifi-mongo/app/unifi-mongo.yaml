@@ -23,7 +23,8 @@ metadata:
 spec:
   members: 1
   type: ReplicaSet
-  version: '7.0.16'
+  # renovate: datasource=docker depName=mongo
+  version: 7.0.16
   security:
     authentication:
       modes:

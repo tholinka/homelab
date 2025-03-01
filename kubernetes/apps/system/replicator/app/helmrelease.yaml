@@ -9,7 +9,6 @@ spec:
   interval: 1h
   chart:
     spec:
-      # renovate: registryUrl=https://windmill-labs.github.io/windmill-helm-charts/
       chart: kubernetes-replicator
       version: 2.11.0
       sourceRef:
