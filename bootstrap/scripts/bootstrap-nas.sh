@@ -38,10 +38,13 @@ function remove_existing() {
 	set -x;
 
 	do_ssh 'sudo find /var/lib/containerd/io.containerd.snapshotter.v1.btrfs/snapshots/ -maxdepth 1 -type d -exec btrfs subvolume delete {} \; ; \
+		sudo btrfs subvolume delete \
+			/var/lib/containerd /var/lib/kubelet /var/lib/cni /var/local/openebs ; \
 		sudo rm -rf \
-		/var/lib/containerd /var/lib/kubelet /var/lib/cni /var/local/openebs \
-		/etc/kubernetes /etc/cni \
-		/opt/cni'
+			/etc/kubernetes /etc/cni \
+			/opt/cni ; \
+		sudo btrfs subvolume create \
+			/var/lib/containerd /var/lib/kubelet /var/lib/cni /var/local/openebs'
 }
 
 # Disks in use by rook-ceph must be wiped before Rook is installed
