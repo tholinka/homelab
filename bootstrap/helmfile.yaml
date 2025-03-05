@@ -2,14 +2,27 @@
 # yaml-language-server: $schema=https://json.schemastore.org/helmfile
 
 helmDefaults:
+  cleanupOnFail: true
   timeout: 600
   force: true
   wait: true
   waitForJobs: true
 
 repositories:
+  - name: controlplaneio
+    url: ghcr.io/controlplaneio-fluxcd/charts
+    oci: true
+
+  - name: coredns
+    url: ghcr.io/coredns/charts
+    oci: true
+
   - name: cilium
     url: https://helm.cilium.io
+
+  - name: external-secrets
+    url: ghcr.io/external-secrets/charts
+    oci: true
 
   - name: jetstack
     url: https://charts.jetstack.io
@@ -20,6 +33,7 @@ repositories:
 releases:
   - name: cilium
     namespace: kube-system
+    atomic: true
     chart: cilium/cilium
     version: 1.17.1
     values:
@@ -31,7 +45,8 @@ releases:
 
   - name: coredns
     namespace: kube-system
-    chart: oci://ghcr.io/coredns/charts/coredns
+    atomic: true
+    chart: coredns/coredns
     version: 1.39.1
     values:
       - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/kube-system/coredns/app/helm-values.yaml'
@@ -43,6 +58,7 @@ releases:
 
   - name: cert-manager
     namespace: cert-manager
+    atomic: true
     chart: jetstack/cert-manager
     version: v1.17.1
     values:
@@ -59,7 +75,8 @@ releases:
 
   - name: external-secrets
     namespace: external-secrets
-    chart: oci://ghcr.io/external-secrets/charts/external-secrets
+    atomic: true
+    chart: external-secrets/external-secrets
     version: 0.14.3
     values:
       - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/external-secrets/external-secrets/app/helm-values.yaml'
@@ -68,7 +85,8 @@ releases:
 
   - name: flux-operator
     namespace: flux-system
-    chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
+    atomic: true
+    chart: controlplaneio/flux-operator
     version: 0.17.0
     values:
       - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/app/helm-values.yaml'
@@ -76,7 +94,8 @@ releases:
 
   - name: flux-instance
     namespace: flux-system
-    chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
+    atomic: true
+    chart: controlplaneio/flux-instance
     version: 0.17.0
     values:
       - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/instance/helm-values.yaml'
