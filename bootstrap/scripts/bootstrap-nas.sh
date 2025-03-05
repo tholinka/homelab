@@ -95,6 +95,11 @@ function do_template_var_lib_kubelet_config() ( # subshell so we don't pollute w
 # 		server c1 192.168.20.61:6443 check backup
 # 		server c2 192.168.20.62:6443 check backup
 # 	server c3 192.168.20.63:6443 check backup
+# - ensure /etc/containerd/config.toml is configured for systemd cgroups:
+# 	version = 2
+#
+#	[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+# 	  SystemdCgroup = true
 function add_nas_to_cluster() {
 	source "$(dirname "${0}")/lib/common.sh"
 
@@ -110,7 +115,7 @@ function add_nas_to_cluster() {
 	sed -i "/server:/ s|:.*|: https://192.168.20.2:6443|g" "$TMPDIR/kubelet.conf" "$TMPDIR/bootstrap-kubelet.conf"
 	do_template_var_lib_kubelet_config > "$TMPDIR/var-lib-kubelet-config.yaml"
 	cat > "$TMPDIR/kubelet.env" <<- _EOT
-		KUBELET_ARGS="--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --fail-swap-on=false"
+		KUBELET_ARGS="--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml"
 	_EOT
 
 	scp -r "$TMPDIR" "nas.servers.internal:$TMPDIR"
