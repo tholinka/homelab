@@ -13,11 +13,11 @@
 			"matchUpdateTypes": [
 				"digest"
 			],
-			"matchPackagePatterns": [
-				"ghcr.io/bjw-s",
-				"ghcr.io/bjw-s-labs",
-				"ghcr.io/onedr0p",
-				"ghcr.io/tholinka"
+			"matchPackageNames": [
+				"/bjw-s/",
+				"/bjw-s-labs/",
+				"/onedr0p/",
+				"/tholinka/"
 			],
 			"ignoreTests": true
 		},
