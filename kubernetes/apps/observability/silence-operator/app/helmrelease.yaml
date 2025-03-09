@@ -97,3 +97,20 @@ spec:
             - name: device
               value: sda
               isRegex: false
+      - apiVersion: monitoring.giantswarm.io/v1alpha1
+        kind: Silence
+        metadata:
+          # there are separate btrfs warnings setup, since the defaults aren't accurate for btrfs
+          name: no-regular-filesystem-out-of-space-warning-on-btrfs
+          namespace: observability
+        spec:
+          matchers:
+            - name: alertname
+              value: NodeFilesystemAlmostOutOfSpace
+              isRegex: false
+            - name: job
+              value: node-exporter
+              isRegex: false
+            - name: fstype
+              value: btrfs
+              isRegex: false
