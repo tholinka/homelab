@@ -11,6 +11,17 @@ spec:
   targets:
     staticConfig:
       static:
-        - nfs.servers.internal
+        - nas.servers.internal
+        - pikvm.servers.internal
+
         - zigbee.iot.internal
         - garage.iot.internal
+
+        - bedroom.air.iot.internal
+        - outdoor.air.iot.internal
+        - living.air.iot.internal
+
+        - one.plugs.iot.internal
+        - two.plugs.iot.internal
+        - three.plugs.iot.internal
+        - four.plugs.iot.internal
