@@ -238,6 +238,24 @@ nodes:
           sysfs:
             devices.system.cpu.cpu4.cpufreq.energy_performance_preference: balance_performance
             devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
+  - hostname: 'q1'
+    ipAddress: '192.168.20.101'
+    installDisk: /dev/sda
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515 # nocloud qemu-guest-agent
+    controlPlane: false
+    networkInterfaces:
+      - deviceSelector:
+          driver: virtio_net
+        dhcp: false
+        addresses:
+          - '192.168.20.101/24'
+        routes:
+          - network: '0.0.0.0/0'
+            gateway: '192.168.20.1'
+        mtu: 1500
+
 # Global patches
 patches:
   - '@./patches/global/cluster-manifests.yaml'
