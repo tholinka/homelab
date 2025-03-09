@@ -22,6 +22,19 @@ spec:
     fullnameOverride: *app
     serviceMonitor:
       enabled: true
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          separator: ;
+          regex: ^(.*)$
+          targetLabel: nodename
+          replacement: $1
+          action: replace
+        - sourceLabels: [__meta_kubernetes_pod_node_name]
+          separator: ;
+          regex: ^(.*)$
+          targetLabel: instance
+          replacement: $1
+          action: replace
     prometheusRules:
       enabled: false
     nodeSelector:
