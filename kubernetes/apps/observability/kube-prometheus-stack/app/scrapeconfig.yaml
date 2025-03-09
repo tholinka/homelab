@@ -36,9 +36,18 @@ kind: ScrapeConfig
 metadata:
   name: &name pikvm
 spec:
+  basicAuth:
+    username:
+      name: scrape-target-pikvm-secret
+      key: USERNAME
+    password:
+      name: scrape-target-pikvm-secret
+      key: PASSWORD
   staticConfigs:
     - targets:
         - pikvm.servers.internal
+  tlsConfig:
+    insecureSkipVerify: true
   metricsPath: /api/export/prometheus/metrics
   relabelings:
     - action: replace
