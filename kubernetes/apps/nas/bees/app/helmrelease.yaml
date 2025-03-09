@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app bees
+  namespace: nas
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tholinka/bees
+              tag: 0.10@sha256:0896282249b463e9e7753963334612f124f2790fa1a8d0d5f62ad53967ec5293
+            env:
+              DB_SIZE: '1073741824' # 1GiB in bytes
+              MOUNT_ARGS: rw,relatime,compress-force=zstd:5,nossd,autodefrag,subvolid=5,subvol=/
+              MOUNT_DEVICE: /dev/disk/by-uuid/58e1f16e-51a7-464e-96ca-44808a6f3471
+            securityContext:
+              readOnlyRootFilesystem: true
+              privileged: true # should only need CAP_SYS_ADMIN, but mount still gives permissions denied with it
+            resources:
+              requests:
+                cpu: 4000m
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+    defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: nas
+    persistence:
+      dev:
+        enabled: true
+        type: hostPath
+        hostPath: &dev /dev
+        globalMounts:
+          - path: *dev

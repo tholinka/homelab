@@ -3,15 +3,18 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app csi-driver-nfs
-  namespace: &namespace kube-system
+  name: &app btrfs-scrub
+  namespace: &namespace nas
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   interval: 1h
   retryInterval: 2m
-  path: ./kubernetes/apps/kube-system/csi-driver-nfs/app
+  path: ./kubernetes/apps/nas/btrfs-scrub/app
+  postBuild:
+    substitute:
+      APP: *app
   prune: true
   sourceRef:
     kind: GitRepository

@@ -1,0 +1,66 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app btrfs-scrub
+  namespace: nas
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        type: cronjob
+        cronjob:
+          schedule: '@weekly'
+          backoffLimit: 0
+          concurrencyPolicy: Forbid
+          failedJobsHistory: 1
+          successfulJobsHistory: 1 # TODO set to 0 after adding lokirule
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tholinka/btrfs-scrub
+              tag: 6.11@sha256:b233980dfc17209246b373e4392f8120f07f5765492df8feb5df9a32851886fd
+            securityContext:
+              readOnlyRootFilesystem: true
+              privileged: true # should only need CAP_SYS_ADMIN, but mount still gives permissions denied with it
+            env:
+              DB_SIZE: '1073741824' # 1GiB in bytes
+              MOUNT_ARGS: rw,relatime,compress-force=zstd:5,nossd,autodefrag,subvolid=5,subvol=/
+              MOUNT_DEVICE: /dev/disk/by-uuid/58e1f16e-51a7-464e-96ca-44808a6f3471
+            resources:
+              requests:
+                cpu: 1000m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: nas
+    persistence:
+      dev:
+        enabled: true
+        type: hostPath
+        hostPath: &dev /dev
+        globalMounts:
+          - path: *dev
+      btrfs: # save scrub status to host path, so that resumes work correctly
+        enabled: true
+        type: hostPath
+        hostPath: &btrfs-path /var/lib/btrfs
+        globalMounts:
+          - path: *btrfs-path

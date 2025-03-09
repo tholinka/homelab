@@ -1,0 +1,5 @@
+/srv/nfs 127.0.0.0/8(rw,fsid=root,async,no_subtree_check) 10.69.0.0/16(rw,fsid=root,async,no_subtree_check) 10.96.0.0/16(rw,fsid=root,async,no_subtree_check) 192.168.1.0/24(rw,fsid=root,async,no_subtree_check) 192.168.20.0/24(rw,fsid=root,async,no_subtree_check)
+
+/srv/nfs/backups 127.0.0.0/8(rw,async,no_subtree_check) 10.69.0.0/16(rw,async,no_subtree_check) 10.96.0.0/16(rw,async,no_subtree_check) 192.168.20.0/24(rw,async,no_subtree_check) 192.168.1.0/24(ro,async,no_subtree_check)
+
+/srv/nfs/media 127.0.0.0/8(rw,async,no_subtree_check) 10.69.0.0/16(rw,async,no_subtree_check) 10.96.0.0/16(rw,async,no_subtree_check) 192.168.20.0/24(rw,async,no_subtree_check) 192.168.1.0/24(ro,async,no_subtree_check)

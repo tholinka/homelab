@@ -238,6 +238,54 @@ nodes:
           sysfs:
             devices.system.cpu.cpu4.cpufreq.energy_performance_preference: balance_performance
             devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
+  - hostname: nas
+    ipAddress: '192.168.20.101' # 101 is the 1GbE nic on dhcp
+    installDiskSelector:
+      wwid: naa.50025388a04bc8b4
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/beac33487528c3277d6dd1ebea227cde27b59435edcbd5364bcc6bdf78d603da # i915, intel-ucode, mei, thunderbolt, btrfs, nfsd (needs 1.10)
+    controlPlane: false
+    networkInterfaces:
+      - interface: bond0
+        bond:
+          deviceSelectors:
+            - permanentAddr: '98:b7:85:21:47:8f'
+            - permanentAddr: '98:b7:85:21:47:90'
+          mode: 802.3ad
+          miimon: 1000
+          lacpRate: fast
+          updelay: 1000
+          downdelay: 2000
+          xmitHashPolicy: layer3+4
+        dhcp: false
+        addresses:
+          - '192.168.20.100/24'
+        routes:
+          - network: '0.0.0.0/0'
+            gateway: '192.168.20.1'
+        mtu: 1500
+      - deviceSelector:
+          hardwareAddr: '9c:5c:8e:c2:ce:69'
+        dhcp: false
+        addresses:
+          - '192.168.20.101/24'
+        routes:
+          - network: '0.0.0.0/0'
+            gateway: '192.168.20.1'
+        mtu: 1500
+    patches:
+      - '@./patches/intel/machine-modules.yaml'
+      - '@./patches/intel/machine-sysfs.yaml'
+      - '@./patches/intel/machine-udev.yaml'
+      - '@./patches/nas/machine-kernel.yaml'
+      - |-
+        machine:
+          sysfs:
+            devices.system.cpu.cpu4.cpufreq.energy_performance_preference: balance_performance
+            devices.system.cpu.cpu5.cpufreq.energy_performance_preference: balance_performance
+            devices.system.cpu.cpu6.cpufreq.energy_performance_preference: balance_performance
+            devices.system.cpu.cpu7.cpufreq.energy_performance_preference: balance_performance
 # Global patches
 patches:
   - '@./patches/global/cluster-manifests.yaml'

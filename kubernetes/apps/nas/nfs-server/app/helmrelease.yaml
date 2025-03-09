@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app nfs-server
+  namespace: nas
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  interval: 1h
+  maxHistory: 3
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tholinka/nfs-server
+              tag: 2.6.4@sha256:34348936ada6444e0df7205ee0762140e274d1a4c7b82d5c35d1d0c143a17492
+            command:
+              - sh
+              - -c
+            args:
+              - 'sleep 100000'
+            env:
+              MOUNT_ARGS_0: rw,relatime,compress-force=zstd:5,nossd,autodefrag,subvolid=2893,subvol=/backups
+              MOUNT_DEVICE_0: /dev/disk/by-uuid/58e1f16e-51a7-464e-96ca-44808a6f3471
+              MOUNT_LOC_0: /srv/nfs/backups
+              MOUNT_ARGS_1: rw,relatime,compress-force=zstd:5,nossd,autodefrag,subvolid=2895,subvol=/media
+              MOUNT_DEVICE_1: /dev/disk/by-uuid/58e1f16e-51a7-464e-96ca-44808a6f3471
+              MOUNT_LOC_1: /srv/nfs/media
+            securityContext:
+              readOnlyRootFilesystem: true
+              privileged: true # should only need CAP_SYS_ADMIN, but mount still gives permissions denied with it
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      nodeSelector:
+        kubernetes.io/hostname: nas
+      priorityClassName: system-cluster-critical
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
+    service:
+      server:
+        controller: main
+        ports:
+          nfs:
+            port: 2049
+    persistence:
+      dev:
+        enabled: true
+        type: hostPath
+        hostPath: &dev /dev
+        globalMounts:
+          - path: *dev
+      exports:
+        type: configMap
+        name: nfs-server
+        globalMounts:
+          - path: /etc/exports
+            subPath: exports
+            readOnly: true
+      srv:
+        type: emptyDir
+        globalMounts:
+          - path: /srv/nfs
+      nfs:
+        type: emptyDir
+        globalMounts:
+          - path: /var/lib/nfs
