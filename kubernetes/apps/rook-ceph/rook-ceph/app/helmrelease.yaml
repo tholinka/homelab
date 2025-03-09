@@ -77,6 +77,8 @@ spec:
             limits:
               memory: 256Mi # default
     enableDiscoveryDaemon: true
+    image:
+      repository: ghcr.io/rook/ceph
     monitoring:
       enabled: true
     resources:
