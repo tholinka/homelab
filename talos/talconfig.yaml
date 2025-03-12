@@ -140,11 +140,20 @@ nodes:
     talosImageURL: factory.talos.dev/installer/ab86bd395e263b78e5f54c800e4d319dae786d9ae25ecb129462a9e0e9491615 # i915, intel-ucode, mei, thunderbolt
     controlPlane: false
     networkInterfaces:
-      - deviceSelector:
-          hardwareAddr: '80:e8:2c:2f:b4:ad'
+      - deviceSelector: # 2.5GbE usb
+          hardwareAddr: '6c:1f:f7:1a:c3:b7'
         dhcp: false
         addresses:
           - '192.168.20.71/24'
+        routes:
+          - network: '0.0.0.0/0'
+            gateway: '192.168.20.1'
+        mtu: 1500
+      - deviceSelector: # backup 1GbE port
+          hardwareAddr: '80:e8:2c:2f:b4:ad'
+        dhcp: false
+        addresses:
+          - '192.168.20.81/24'
         routes:
           - network: '0.0.0.0/0'
             gateway: '192.168.20.1'
