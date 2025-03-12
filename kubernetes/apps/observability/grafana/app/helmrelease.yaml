@@ -219,6 +219,11 @@ spec:
           gnetId: 14371
           revision: 1
           datasource: Prometheus
+        lokiforlogs:
+          # renovate: depName="LokiForLogs"
+          gnetId: 15587
+          revision: 1
+          datasource: Loki
     sidecar:
       dashboards:
         enabled: true
