@@ -19,9 +19,6 @@ spec:
       - key: kubernetes.io/os
         operator: In
         values: ['linux']
-      - key: kubernetes.io/hostname
-        operator: NotIn
-        values: ['nas']
   upgrade:
     image: ghcr.io/jfroy/tnu:0.4.0
     args:
