@@ -9,6 +9,7 @@ spec:
   blocks:
     - cidr: 192.168.20.0/24
     - cidr: ::ffff:192.168.20.0/112 # IPv4-mapped IPv6
+    - cidr: fdaa:aaaa:aaaa:aa20::/64 # ULA Address
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliuml2announcementpolicy_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
@@ -52,7 +53,7 @@ kind: Service
 metadata:
   name: kube-api
   annotations:
-    lbipam.cilium.io/ips: 192.168.20.2, ::ffff:192.168.20.2
+    lbipam.cilium.io/ips: 192.168.20.2, ::ffff:192.168.20.2, fdaa:aaaa:aaaa:aa20::2
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Cluster
