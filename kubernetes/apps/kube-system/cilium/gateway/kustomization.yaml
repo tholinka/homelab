@@ -5,6 +5,5 @@ kind: Kustomization
 resources:
   - ./certificate.yaml
   - ./external.yaml
-  - ./httproute.yaml
   - ./internal.yaml
   - ./pushsecret.yaml
