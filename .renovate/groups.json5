@@ -6,12 +6,43 @@
 				"Actions Runner Controller Group"
 			],
 			"groupName": "Actions Runner Controller",
-			"matchPackageNames": [
-				"/gha-runner-scale-set/"
-			],
 			"matchDatasources": [
 				"docker",
 				"helm"
+			],
+			"matchPackageNames": [
+				"/gha-runner-scale-set-controller/",
+				"/gha-runner-scale-set/"
+			],
+			"group": {
+				"commitMessageTopic": "{{{groupName}}} group"
+			}
+		},
+		{
+			"description": [
+				"CoreDNS Group"
+			],
+			"groupName": "CoreDNS",
+			"matchDatasources": [
+				"docker"
+			],
+			"matchPackageNames": [
+				"/coredns/"
+			],
+			"group": {
+				"commitMessageTopic": "{{{groupName}}} group"
+			}
+		},
+		{
+			"description": [
+				"External Secrets Operator Group"
+			],
+			"groupName": "External Secrets Operator",
+			"matchDatasources": [
+				"docker"
+			],
+			"matchPackageNames": [
+				"/external-secrets/"
 			],
 			"group": {
 				"commitMessageTopic": "{{{groupName}}} group"
@@ -22,12 +53,12 @@
 				"Flux Operator Group"
 			],
 			"groupName": "Flux Operator",
+			"matchDatasources": [
+				"docker"
+			],
 			"matchPackageNames": [
 				"/flux-operator/",
 				"/flux-instance/"
-			],
-			"matchDatasources": [
-				"docker"
 			],
 			"group": {
 				"commitMessageTopic": "{{{groupName}}} group"
@@ -38,11 +69,12 @@
 				"Intel Device Plugins Group"
 			],
 			"groupName": "Intel-Device-Plugins",
-			"matchPackageNames": [
-				"/intel-device-plugins/"
-			],
 			"matchDatasources": [
 				"helm"
+			],
+			"matchPackageNames": [
+				"/intel-device-plugins-operator/",
+				"/intel-device-plugins-gpu/"
 			],
 			"group": {
 				"commitMessageTopic": "{{{groupName}}} group"
@@ -53,11 +85,12 @@
 				"Rook-Ceph Group"
 			],
 			"groupName": "Rook-Ceph",
-			"matchPackageNames": [
-				"/rook.ceph/"
-			],
 			"matchDatasources": [
 				"helm"
+			],
+			"matchPackageNames": [
+				"/rook-ceph/",
+				"/rook-ceph-cluster/"
 			],
 			"group": {
 				"commitMessageTopic": "{{{groupName}}} group"
@@ -65,15 +98,14 @@
 		},
 		{
 			"description": [
-				"Talos Group"
+				"Spegel Group"
 			],
-			"groupName": "Talos",
-			"matchPackageNames": [
-				"/siderolabs/talosctl/",
-				"/siderolabs/installer/"
-			],
+			"groupName": "Spegel",
 			"matchDatasources": [
 				"docker"
+			],
+			"matchPackageNames": [
+				"/spegel/"
 			],
 			"group": {
 				"commitMessageTopic": "{{{groupName}}} group"
