@@ -79,6 +79,8 @@ The Gateway Max doesn't support BGP... but we can work around that by using a FR
 
 Guide followed from here, after already setting up the onboot utilities from the ULA setup: https://www.map59.com/ubiquiti-udm-running-bgp/.
 
+Verify it's working with `vtysh -c 'show ip bgp'`.
+
 `/etc/frr/bgpd.conf`
 ```conf
 ! -*- bgp -*-
@@ -96,9 +98,18 @@ router bgp 64513
   neighbor k8s peer-group
   neighbor k8s remote-as 64514
 
+  neighbor 192.168.20.51 peer-group k8s
+
   neighbor 192.168.20.61 peer-group k8s
   neighbor 192.168.20.62 peer-group k8s
   neighbor 192.168.20.63 peer-group k8s
+
+  neighbor 192.168.20.71 peer-group k8s
+  neighbor 192.168.20.72 peer-group k8s
+  neighbor 192.168.20.73 peer-group k8s
+  neighbor 192.168.20.74 peer-group k8s
+
+  neighbor 192.168.20.101 peer-group k8s
 
   address-family ipv4 unicast
     neighbor k8s next-hop-self
