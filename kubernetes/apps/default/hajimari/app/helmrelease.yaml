@@ -63,11 +63,13 @@ spec:
               icon: 'mdi:kubernetes'
               url: https://kubesearch.dev/
               targetBlank: false
+    # doesn't currently support gateway: https://github.com/toboshii/hajimari/issues/163
     route:
-      main:
+      app:
         hostnames:
           - tholinka.dev # using root level ${SECRET_DOMAIN} breaks flux-local
           - apps.${SECRET_DOMAIN}
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
         parentRefs:
           - name: internal
             namespace: kube-system
