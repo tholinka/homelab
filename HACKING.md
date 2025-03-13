@@ -73,6 +73,44 @@ _EOF
 chmod a+x /data/on_boot.d/17-ula.sh
 ```
 
+### UniFi BGP Setup
+
+The Gateway Max doesn't support BGP... but we can work around that by using a FRR onboot script.
+
+Guide followed from here, after already setting up the onboot utilities from the ULA setup: https://www.map59.com/ubiquiti-udm-running-bgp/.
+
+`/etc/frr/bgpd.conf`
+```conf
+! -*- bgp -*-
+!
+hostname $UDMP_HOSTNAME
+password zebra
+frr defaults traditional
+log file stdout
+!
+router bgp 64513
+  bgp router-id 192.168.1.1
+  no bgp ebgp-requires-policy
+  maximum-paths 1
+
+  neighbor k8s peer-group
+  neighbor k8s remote-as 64514
+
+  neighbor 192.168.20.61 peer-group k8s
+  neighbor 192.168.20.62 peer-group k8s
+  neighbor 192.168.20.63 peer-group k8s
+
+  address-family ipv4 unicast
+    neighbor k8s next-hop-self
+    neighbor k8s soft-reconfiguration inbound
+   exit-address-family
+  !
+route-map ALLOW-ALL permit 10
+!
+line vty
+!
+```
+
 ## 💥 Cluster Blew Up?
 
 ### 💣 Reset
