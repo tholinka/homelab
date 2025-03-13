@@ -9,7 +9,7 @@
 				"docker"
 			],
 			"automerge": true,
-			"automergeType": "pr",
+			"automergeType": "branch",
 			"matchUpdateTypes": [
 				"digest"
 			],
@@ -52,8 +52,25 @@
 				"minor",
 				"patch"
 			],
-			"matchDepNames": [
-				"kube-prometheus-stack"
+			"matchPackageNames": [
+				"/kube-prometheus-stack/"
+			],
+			"ignoreTests": false
+		},
+		{
+			"description": "Auto-merge GitHub Releases",
+			"matchDatasources": [
+				"github-releases"
+			],
+			"automerge": true,
+			"automergeType": "pr",
+			"matchUpdateTypes": [
+				"minor",
+				"patch"
+			],
+			"matchPackageNames": [
+				"/gateway-api/",
+				"/prometheus-operator/"
 			],
 			"ignoreTests": false
 		}
