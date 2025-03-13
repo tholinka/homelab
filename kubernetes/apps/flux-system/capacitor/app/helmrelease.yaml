@@ -103,19 +103,20 @@ spec:
         ports:
           http:
             enabled: true
-            port: 9000
-    ingress:
+            port: &port 9000
+    route:
       app:
-        enabled: true
-        className: internal
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *port
         annotations:
           hajimari.io/appName: Capacitor
           hajimari.io/icon: simple-icons:flux
           hajimari.io/group: servers
-        hosts:
-          - host: &host '{{ .Release.Name }}.${SECRET_DOMAIN}'
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http

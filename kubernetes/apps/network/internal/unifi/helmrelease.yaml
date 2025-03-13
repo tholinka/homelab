@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: unifi
+  name: &app unifi
   namespace: network
 spec:
   interval: 1h
@@ -88,7 +88,7 @@ spec:
             protocol: UDP
           https:
             primary: false
-            port: 8443
+            port: &port 8443
             protocol: HTTPS
           secure-redirect:
             primary: false
@@ -114,25 +114,23 @@ spec:
             primary: false
             protocol: UDP
             port: 5514
-    ingress:
+    route:
       app:
-        className: internal
+        kind: TLSRoute
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: tls
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *port
         annotations:
           hajimari.io/appName: Unifi
           hajimari.io/icon: mdi:router-network
           hajimari.io/group: servers
-          # this is the default, but specifically calling it out, we DO NOT want to validate unifi's certs
-          nginx.ingress.kubernetes.io/proxy-ssl-verify: 'off'
-          nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-          nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
-          nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
-        hosts:
-          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: https
     persistence:
       config:
         existingClaim: unifi
@@ -140,3 +138,9 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/logs
+      cert:
+        type: secret
+        name: '${SECRET_DOMAIN/./-}-unifi'
+        globalMounts:
+          - path: /config/data/keystore
+            subPath: keystore.jks

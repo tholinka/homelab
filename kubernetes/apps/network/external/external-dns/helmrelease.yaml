@@ -26,8 +26,10 @@ spec:
       retries: 3
   values:
     fullnameOverride: *app
-    provider:
-      name: cloudflare
+    image: # TODO: https://github.com/kubernetes-sigs/external-dns/pull/4943
+      repository: ghcr.io/buroa/external-dns
+      tag: 631b84da
+    provider: cloudflare
     env:
       - name: &name CF_API_TOKEN
         valueFrom:
@@ -39,11 +41,16 @@ spec:
       - --cloudflare-proxied
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
-      - --ignore-ingress-tls-spec
-      - --ingress-class=external
+      - --gateway-label-filter=gateway==external
     triggerLoopOnEvent: true
     policy: sync
-    sources: ['crd', 'ingress']
+    sources:
+      - crd
+      - gateway-httproute
+      - gateway-grpcroute
+      - gateway-tlsroute
+      - gateway-tcproute
+      - gateway-udproute
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ['${SECRET_DOMAIN}']

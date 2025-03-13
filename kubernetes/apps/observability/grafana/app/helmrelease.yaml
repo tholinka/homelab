@@ -157,12 +157,6 @@ spec:
           gnetId: 11454
           revision: 14
           datasource: Prometheus
-        nginx:
-          url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/nginx.json
-          datasource: Prometheus
-        nginx-request-handling-performance:
-          url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/grafana/dashboards/request-handling-performance.json
-          datasource: Prometheus
         node-exporter-full:
           # renovate: depName="Node Exporter Full"
           gnetId: 1860
@@ -246,13 +240,19 @@ spec:
       - vonage-status-panel
     serviceMonitor:
       enabled: true
-    ingress:
-      enabled: true
-      ingressClassName: internal
-      annotations:
-        hajimari.io/appName: Grafana
-        hajimari.io/icon: simple-icons:grafana
-      hosts: ['grafana.${SECRET_DOMAIN}']
+    route:
+      main:
+        enabled: true
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        annotations:
+          hajimari.io/appName: Grafana
+          hajimari.io/icon: simple-icons:grafana
+
     persistence:
       enabled: false
     testFramework:

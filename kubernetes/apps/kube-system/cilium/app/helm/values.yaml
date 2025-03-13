@@ -86,8 +86,3 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
-socketLB: # TODO remove after finishing migration to gateway
-  hostNamespaceOnly: true
-tls: # TODO remove after finishing migration to gateway
-  secretsNamespace:
-    create: false

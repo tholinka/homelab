@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: pihole
+  name: &app pihole
   namespace: network
 spec:
   interval: 1h
@@ -194,21 +194,22 @@ spec:
             primary: false
             port: *exporter-port
             protocol: HTTP
-    ingress:
-      pihole:
-        className: internal
+    route:
+      app:
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: *pihole-port
         annotations:
           hajimari.io/appName: PiHole
           hajimari.io/icon: mdi:pi-hole
           hajimari.io/group: servers
-          nginx.ingress.kubernetes.io/app-root: /admin
-        hosts:
-          - host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
-            paths:
-              - path: /
-                service:
-                  identifier: pihole
-                  port: http
     serviceMonitor:
       pihole:
         serviceName: pihole

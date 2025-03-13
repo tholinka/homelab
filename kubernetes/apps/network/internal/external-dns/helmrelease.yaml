@@ -27,7 +27,9 @@ spec:
   #     namespace: default
   values:
     fullnameOverride: *app
-    # logLevel: debug
+    image: # TODO: https://github.com/kubernetes-sigs/external-dns/pull/4943
+      repository: ghcr.io/buroa/external-dns
+      tag: 631b84da
     provider:
       name: webhook
       webhook:
@@ -49,8 +51,6 @@ spec:
               secretKeyRef:
                 name: *secret
                 key: UNIFI_PASS
-          # - name: LOG_LEVEL
-          #   value: "debug"
         livenessProbe:
           httpGet:
             path: /healthz
@@ -63,11 +63,15 @@ spec:
             port: http-webhook
           initialDelaySeconds: 10
           timeoutSeconds: 5
-    extraArgs:
-      - --ignore-ingress-tls-spec
     triggerLoopOnEvent: true
     policy: sync
-    sources: ['ingress', 'service']
+    sources:
+      - gateway-httproute
+      - gateway-grpcroute
+      - gateway-tlsroute
+      - gateway-tcproute
+      - gateway-udproute
+      - service
     txtOwnerId: main
     txtPrefix: k8s.main.
     domainFilters: ['${SECRET_DOMAIN}']

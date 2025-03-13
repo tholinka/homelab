@@ -30,14 +30,18 @@ spec:
         forceConflicts: true
     cleanPrometheusOperatorObjectNames: true
     alertmanager:
-      ingress:
-        enabled: true
-        ingressClassName: internal
+      route:
+        main:
+          enabled: true
+          hostnames:
+            - alertmanager.${SECRET_DOMAIN}
+          parentRefs:
+            - name: internal
+              namespace: kube-system
+              sectionName: https
         annotations:
           hajimari.io/appName: Alertmanager
           hajimari.io/icon: mdi:alert-box
-        hosts: ['alertmanager.${SECRET_DOMAIN}']
-        pathType: Prefix
       alertmanagerSpec:
         alertmanagerConfiguration:
           name: alertmanager
@@ -58,14 +62,18 @@ spec:
     kubeProxy:
       enabled: false
     prometheus:
-      ingress:
-        enabled: true
-        ingressClassName: internal
+      route:
+        main:
+          enabled: true
+          hostnames:
+            - 'prometheus.${SECRET_DOMAIN}'
+          parentRefs:
+            - name: internal
+              namespace: kube-system
+              sectionName: https
         annotations:
           hajimari.io/appName: Prometheus
           hajimari.io/icon: simple-icons:prometheus
-        hosts: ['prometheus.${SECRET_DOMAIN}']
-        pathType: Prefix
       prometheusSpec:
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false

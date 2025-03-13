@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: esphome
+  name: &app esphome
 spec:
   interval: 1h
   chartRef:
@@ -75,29 +75,42 @@ spec:
         controller: esphome
         ports:
           http:
-            port: 6052
+            port: &http 6052
           code-server:
-            port: 12321
+            port: &code 12321
 
-    ingress:
+    route:
       app:
-        className: 'internal'
+        hostnames:
+          - '{{ .Release.Name }}.${SECRET_DOMAIN}'
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: *app
+                port: *http
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /code
+            backendRefs:
+              - name: *app
+                port: *code
+            filters:
+              - type: URLRewrite
+                urlRewrite:
+                  path:
+                    type: ReplacePrefixMatch
+                    replacePrefixMatch: /
         annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /$1
           hajimari.io/appName: ESPHome
           hajimari.io/icon: simple-icons:esphome
-          hajimari.io/url: https://esphome.${SECRET_DOMAIN}
-        hosts:
-          - host: esphome.${SECRET_DOMAIN}
-            paths:
-              - path: /(.*)
-                service:
-                  identifier: app
-                  port: http
-              - path: /code/(.*)
-                service:
-                  identifier: app
-                  port: code-server
 
     persistence:
       config:

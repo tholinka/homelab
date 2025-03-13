@@ -4,7 +4,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: hajimari
+  name: &app hajimari
 spec:
   interval: 1h
   chart:
@@ -63,21 +63,21 @@ spec:
               icon: 'mdi:kubernetes'
               url: https://kubesearch.dev/
               targetBlank: false
-    ingress:
+    route:
       main:
-        enabled: true
-        ingressClassName: internal
+        hostnames:
+          - tholinka.dev # using root level ${SECRET_DOMAIN} breaks flux-local
+          - apps.${SECRET_DOMAIN}
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: *app
+                port: 80
         annotations:
           hajimari.io/enable: 'false'
-        hosts:
-          - host: tholinka.dev # using root level ${SECRET_DOMAIN} breaks flux-local
-            paths:
-              - path: /
-                pathType: Prefix
-          - host: apps.${SECRET_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
     persistence:
       data:
         enabled: true

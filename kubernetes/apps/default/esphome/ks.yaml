@@ -10,6 +10,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
+  components:
+    - ../../../../components/gatus/guarded
+    - ../../../../components/volsync
   interval: 1h
   retryInterval: 2m
   timeout: 5m
@@ -25,8 +28,6 @@ spec:
       namespace: volsync-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
-  components:
-    - ../../../../components/volsync
   postBuild:
     substitute:
       APP: *appname
