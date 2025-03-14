@@ -63,11 +63,10 @@ spec:
               readOnlyRootFileSystem: true
             resources:
               requests:
-                memory: '1024Mi'
-                cpu: '100m'
+                cpu: 100m
               limits:
-                memory: '1500Mi'
-                cpu: '512m'
+                memory: 1500Mi
+                cpu: 512m
     service:
       app:
         controller: app

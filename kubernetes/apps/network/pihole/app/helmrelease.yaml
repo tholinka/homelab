@@ -47,6 +47,11 @@ spec:
               - /config/update.sh
             securityContext:
               allowPrivilegeEscalation: false
+            resources:
+              requests:
+                cpu: 200m
+              limits:
+                memory: 256Mi
           dnscrypt-proxy:
             image:
               repository: ghcr.io/klutchell/dnscrypt-proxy
@@ -71,7 +76,8 @@ spec:
             resources:
               requests:
                 cpu: 25m
-                memory: 128Mi
+              limits:
+                memory: 32Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFileSystem: true
@@ -117,12 +123,10 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
             resources:
-              limits:
-                cpu: 100m
-                memory: 256Mi
               requests:
-                cpu: 50m
-                memory: 128Mi
+                cpu: 100m
+              limits:
+                memory: 256Mi
           exporter:
             image:
               repository: ekofr/pihole-exporter
@@ -135,11 +139,10 @@ spec:
               PIHOLE_PORT: *pihole-port
               PIHOLE_PASSWORD: *pihole-password
             resources:
-              limits:
-                memory: 128Mi
               requests:
-                cpu: 100m
-                memory: 128Mi
+                cpu: 10m
+              limits:
+                memory: 32Mi
             probes:
               liveness: &exporter-probes
                 enabled: true

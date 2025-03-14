@@ -23,7 +23,6 @@ spec:
           memory: 512Mi
         requests:
           cpu: 10m
-          memory: 512Mi
       volumeMounts:
         - mountPath: /machine
           name: machine-root

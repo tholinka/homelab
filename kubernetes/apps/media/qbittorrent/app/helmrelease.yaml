@@ -56,7 +56,6 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 2Gi
               limits:
                 memory: 8Gi
           vuetorrent:
@@ -72,6 +71,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
+              limits:
                 memory: 25Mi
           port-forward:
             image:

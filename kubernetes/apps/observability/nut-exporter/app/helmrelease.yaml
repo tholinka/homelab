@@ -35,10 +35,9 @@ spec:
                 custom: false
             resources:
               requests:
-                cpu: 15m
-                memory: 30Mi
+                cpu: 10m
               limits:
-                memory: 50Mi
+                memory: 10Mi
     service:
       app:
         controller: main
