@@ -50,9 +50,8 @@ spec:
               GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
               WEB_PORT: &port 80
-            envFrom:
-              - secretRef:
-                  name: gatus-secret
+              # flux webhook doesn't get replaced in the config file unless we SECRET_DOMAIN as an environment variable
+              SECRET_DOMAIN: ${SECRET_DOMAIN}
             probes:
               liveness: &probes
                 enabled: true
@@ -84,10 +83,16 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        controller: gatus
+        controller: *app
         ports:
           http:
             port: *port
+    serviceMonitor:
+      app:
+        serviceName: *app
+        endpoints:
+          - port: http
+
     route:
       app:
         hostnames:
@@ -105,10 +110,10 @@ spec:
           hajimari.io/icon: mdi:list-status
     serviceAccount:
       create: true
-      name: gatus
+      name: *app
     persistence:
       config:
-        existingClaim: gatus
+        existingClaim: *app
       config-file:
         type: configMap
         name: gatus-configmap
