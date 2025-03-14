@@ -10,7 +10,13 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/gatus/guarded
   path: ./kubernetes/apps/kube-system/cilium/app
+  postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: hubble
   prune: true
   sourceRef:
     kind: GitRepository
