@@ -14,3 +14,4 @@ resources:
   - ./spegel/ks.yaml
 components:
   - ../../components/common
+  - ../../components/repos/app-template
