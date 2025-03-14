@@ -52,3 +52,7 @@ spec:
       enabled: false
     nodeSelector:
       kubernetes.io/arch: amd64
+    resources:
+      limits:
+        cpu: 15m
+        memory: 30Mi

@@ -171,7 +171,7 @@ spec:
                   severity: critical
               - alert: BtrfsDeviceAlmostFull
                 annotations:
-                  summary: BTRFS device {{$labels.device}} on {{$labels.kubernetes_node}}@{{$labels.instance}} has less than 10GB of free space left
+                  summary: BTRFS device {{$labels.device}}@{{$labels.instance}} has less than 1% of free space left
                 expr: (node_btrfs_device_unused_bytes{job="node-exporter"} / node_btrfs_device_size_bytes{job="node-exporter"} * 100) < 1
                 labels:
                   severity: critical

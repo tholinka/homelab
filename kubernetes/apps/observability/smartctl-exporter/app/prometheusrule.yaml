@@ -19,8 +19,9 @@ spec:
             severity: critical
 
         - alert: SmartDeviceTestFailed
+          # skip all QEMU drives, they don't support SMART
           expr: |
-            (smartctl_device_smart_status != 1 or smartctl_device_status != 1)
+            (smartctl_device_smart_status and on (nodename,device) (smartctl_device unless smartctl_device{model_name="QEMU QEMU HARDDISK"})) != 1 or smartctl_device_status != 1
           for: 5m
           annotations:
             summary: >

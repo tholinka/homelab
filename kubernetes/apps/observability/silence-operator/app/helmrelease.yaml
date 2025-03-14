@@ -47,56 +47,8 @@ spec:
               value: CephNodeDiskspaceWarning
               isRegex: false
             - name: mountpoint
-              value: /etc/nfsmount.conf
-              isRegex: false
-      - apiVersion: monitoring.giantswarm.io/v1alpha1
-        kind: Silence
-        metadata:
-          name: ceph-node-exporter-diskspace-warning
-          namespace: observability
-        spec:
-          matchers:
-            - name: alertname
-              value: CephNodeDiskspaceWarning
-              isRegex: false
-            - name: container
-              value: node-exporter
-              isRegex: false
-      - apiVersion: monitoring.giantswarm.io/v1alpha1
-        kind: Silence
-        metadata:
-          name: ceph-node-exporter-packet-drops
-          namespace: observability
-        spec:
-          matchers:
-            - name: alertname
-              value: CephNodeNetworkPacketDrops
-              isRegex: false
-            - name: container
-              value: node-exporter
-              isRegex: false
-            - name: instance
-              value: 192.168.20.71:9100
-              isRegex: false
-      - apiVersion: monitoring.giantswarm.io/v1alpha1
-        kind: Silence
-        metadata:
-          name: smartctl-on-virtio-device
-          namespace: observability
-        spec:
-          matchers:
-            - name: alertname
-              value: SmartDeviceTestFailed
-              isRegex: false
-            - name: service
-              value: smartctl-exporter
-              isRegex: false
-            - name: instance
-              value: q1
-              isRegex: false
-            - name: device
-              value: sda
-              isRegex: false
+              value: (/etc/nfsmount.conf|/var)
+              isRegex: true
       - apiVersion: monitoring.giantswarm.io/v1alpha1
         kind: Silence
         metadata:
@@ -106,8 +58,8 @@ spec:
         spec:
           matchers:
             - name: alertname
-              value: NodeFilesystemAlmostOutOfSpace
-              isRegex: false
+              value: (NodeFilesystemAlmostOutOfSpace|NodeFilesystemSpaceFillingUp)
+              isRegex: true
             - name: job
               value: node-exporter
               isRegex: false
