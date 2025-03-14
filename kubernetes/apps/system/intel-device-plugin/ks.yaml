@@ -42,3 +42,5 @@ spec:
   targetNamespace: *namespace
   timeout: 5m
   wait: false
+  dependsOn:
+    - name: intel-device-plugin # needs the chart to be created
