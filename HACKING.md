@@ -122,6 +122,19 @@ line vty
 !
 ```
 
+### Healthchecks.io ping
+
+```sh
+UUID=test
+cat > /data/on_boot.d/20-healthchecksio.sh << EOF
+#!/bin/sh
+
+echo '* * * * * root curl -X POST https://hc-ping.com/${UUID}' > /etc/cron.d/healthchecksio
+EOF
+chmod a+x /data/on_boot.d/20-healthchecksio.sh
+/data/on_boot.d/20-healthchecksio.sh
+```
+
 ## 💥 Cluster Blew Up?
 
 ### 💣 Reset
