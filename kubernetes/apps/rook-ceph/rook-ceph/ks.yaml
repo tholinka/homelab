@@ -12,7 +12,7 @@ spec:
   interval: 1h
   retryInterval: 2m
   path: ./kubernetes/apps/rook-ceph/rook-ceph/app
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -59,7 +59,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: rook
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system

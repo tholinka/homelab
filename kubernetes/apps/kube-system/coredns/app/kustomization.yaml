@@ -8,6 +8,9 @@ configMapGenerator:
   - name: coredns-helm-values
     files:
       - values.yaml=./helm-values.yaml
+  - name: coredns-dnsdist
+    files:
+      - ./resources/dnsdist.conf
 configurations:
   - kustomizeconfig.yaml
 generatorOptions:
